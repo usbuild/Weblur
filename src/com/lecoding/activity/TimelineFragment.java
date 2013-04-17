@@ -1,10 +1,13 @@
 package com.lecoding.activity;
 
-import android.app.ActionBar;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.lecoding.R;
@@ -13,6 +16,7 @@ import com.lecoding.util.JSONParser;
 import com.lecoding.util.WeiboAdapter;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.StatusesAPI;
+import com.weibo.sdk.android.api.WeiboAPI;
 import com.weibo.sdk.android.net.RequestListener;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
+public class TimelineFragment extends Fragment {
     /**
      * Called when the activity is first created.
      */
@@ -34,19 +38,19 @@ public class MainActivity extends BaseActivity {
     private ProgressDialog progressDialog;
 
     public void updateListView(List<Status> statuses) {
-        listView.setAdapter(new WeiboAdapter(this, statuses));
+        listView.setAdapter(new WeiboAdapter(this.getActivity(), statuses));
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.gound, container, false);
+        listView = (ListView) view.findViewById(R.id.ground_list);
+        return view;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-
-//////////////
-        listView = (ListView) findViewById(R.id.ground_list);
 
         handler = new Handler(new Handler.Callback() {
             @Override
@@ -55,7 +59,7 @@ public class MainActivity extends BaseActivity {
                 progressDialog.cancel();
                 switch (message.what) {
                     case WEIBO_ERROR:
-                        Toast.makeText(MainActivity.this, "拉取微博信息出错！", Toast.LENGTH_LONG).show();
+                        Toast.makeText(TimelineFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
                         break;
                     case PUBLIC_LINE:
                         updateListView((List<Status>) message.obj);
@@ -65,8 +69,9 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        StatusesAPI statusesAPI = new StatusesAPI(token);
-        statusesAPI.publicTimeline(20, 1, false, new RequestListener() {
+
+        StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
+        statusesAPI.homeTimeline(0, 0, 20, 1, false, WeiboAPI.FEATURE.ALL, false, new RequestListener() {
             @Override
             public void onComplete(String s) {
                 JSONTokener tokener = new JSONTokener(s);
@@ -98,7 +103,8 @@ public class MainActivity extends BaseActivity {
                 handler.sendMessage(message);
             }
         });
-        progressDialog = ProgressDialog.show(this, "",
+        progressDialog = ProgressDialog.show(getActivity(), "",
                 "正在拉取数据", true);
     }
+
 }

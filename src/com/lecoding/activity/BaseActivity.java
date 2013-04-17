@@ -2,6 +2,9 @@ package com.lecoding.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,7 +18,7 @@ import com.weibo.sdk.android.Weibo;
  * User: usbuild
  * DateTime: 13-4-17 下午4:51
  */
-public abstract class BaseActivity extends Activity {
+public class BaseActivity extends Activity {
     private static final String ACCESS_TOKEN = "2.008NuYtBnYdDWDd4866062744RXaVC";
     private static final String EXPIRES_IN = "157516713";
     public static Oauth2AccessToken token = null;
@@ -24,12 +27,23 @@ public abstract class BaseActivity extends Activity {
     protected Weibo weibo;
     public static BaseActivity activity;
 
-    protected BaseActivity() {
+    private Fragment groundFragment;
+    private Fragment timelineFragment;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (token == null) {
             token = new Oauth2AccessToken(ACCESS_TOKEN, EXPIRES_IN);
             weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
         }
         activity = this;
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        setContentView(R.layout.main);
+        groundFragment = new GroundFragment();
+        timelineFragment = new TimelineFragment();
     }
 
     @Override
@@ -41,6 +55,16 @@ public abstract class BaseActivity extends Activity {
         getActionBar().setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
             @Override
             public boolean onNavigationItemSelected(int i, long l) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                switch (i) {
+                    case 0:
+                        fragmentTransaction.replace(R.id.mainframe, groundFragment);
+                        break;
+                    case 1:
+                        fragmentTransaction.replace(R.id.mainframe, timelineFragment);
+                        break;
+                }
+                fragmentTransaction.commit();
                 return false;
             }
         });

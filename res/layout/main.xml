@@ -5,11 +5,17 @@
               android:layout_height="match_parent"
         >
 
-    <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/ground_list"
-            />
+    <!--<ListView-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/ground_list"-->
+            <!--/>-->
 
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/mainframe"
+            >
+    </FrameLayout>
 </LinearLayout>
 

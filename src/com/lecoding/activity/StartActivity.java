@@ -20,7 +20,7 @@ public class StartActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 Intent mainIntent = new Intent(StartActivity.this,
-                        MainActivity.class);
+                        BaseActivity.class);
                 StartActivity.this.startActivity(mainIntent);
                 StartActivity.this.finish();
                 overridePendingTransition(R.anim.mainfadein,
