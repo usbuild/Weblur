@@ -3,9 +3,7 @@ package com.lecoding.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
+import android.os.Handler;
 import com.lecoding.R;
 
 /**
@@ -14,30 +12,20 @@ import com.lecoding.R;
  * DateTime: 13-4-11 下午2:33
  */
 public class StartActivity extends Activity {
+    private static final int SPLASH_DISPLAY_TIME = 2000; /* 3 seconds */
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final View view = View.inflate(this, R.layout.start, null);
-        setContentView(view);
-
-        AlphaAnimation aa = new AlphaAnimation(0.3f, 1.0f);
-        aa.setDuration(2000);
-        view.setAnimation(aa);
-        aa.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+        setContentView(R.layout.start);
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                Intent mainIntent = new Intent(StartActivity.this,
+                        MainActivity.class);
+                StartActivity.this.startActivity(mainIntent);
+                StartActivity.this.finish();
+                overridePendingTransition(R.anim.mainfadein,
+                        R.anim.splashfadeout);
             }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
+        }, SPLASH_DISPLAY_TIME);
     }
 }

@@ -7,4 +7,7 @@
     <string name="user_name">用户名</string>
     <string name="username">用户名</string>
     <string name="ib_desc">for post</string>
+    <string name="menu_post">发表微博</string>
+    <string name="menu_search">搜索微博</string>
+    <string name="nav_menu">导航菜单</string>
 </resources>
