@@ -17,24 +17,24 @@ public class WeiblurAuthListener implements WeiboAuthListener {
     public void onComplete(Bundle bundle) {
         String token = bundle.getString("access_token");
         String expiresIn = bundle.getString("expires_in");
-        MainActivity.token = new Oauth2AccessToken(token, expiresIn);
+        BaseActivity.token = new Oauth2AccessToken(token, expiresIn);
     }
 
     @Override
     public void onWeiboException(WeiboException e) {
-        Toast.makeText(MainActivity.activity, "Auth cancel",
+        Toast.makeText(BaseActivity.activity, "Auth cancel",
                 Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onError(WeiboDialogError weiboDialogError) {
-        Toast.makeText(MainActivity.activity,
+        Toast.makeText(BaseActivity.activity,
                 "Auth error : " + weiboDialogError.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onCancel() {
-        Toast.makeText(MainActivity.activity, "Auth cancel",
+        Toast.makeText(BaseActivity.activity, "Auth cancel",
                 Toast.LENGTH_LONG).show();
     }
 }

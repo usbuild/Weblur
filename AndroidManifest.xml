@@ -16,6 +16,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light"
             android:icon="@drawable/logo"
+            android:uiOptions="splitActionBarWhenNarrow"
             >
         <activity
                 android:name=".activity.StartActivity"
