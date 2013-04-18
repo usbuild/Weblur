@@ -2,12 +2,14 @@ package com.lecoding.activity;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.lecoding.R;
@@ -44,6 +46,18 @@ public class GroundFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.gound, container, false);
         listView = (ListView) view.findViewById(R.id.ground_list);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                Status status = (Status) listView.getAdapter().getItem(pos);
+                Intent intent = new Intent(GroundFragment.this.getActivity(), ViewWeiboActivity.class);
+                intent.putExtra("status", status);
+                startActivity(intent);
+            }
+        });
+
+
         return view;
     }
 

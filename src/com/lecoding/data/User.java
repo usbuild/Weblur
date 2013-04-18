@@ -1,5 +1,6 @@
 package com.lecoding.data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  * User: usbuild
  * DateTime: 13-4-13 上午9:41
  */
-public class User {
+public class User  implements Serializable {
     private long id;
     private String idstr;
     private String screenName;

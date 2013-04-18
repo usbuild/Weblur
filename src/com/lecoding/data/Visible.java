@@ -1,11 +1,13 @@
 package com.lecoding.data;
 
+import java.io.Serializable;
+
 /**
  * Created with IntelliJ IDEA.
  * User: usbuild
  * DateTime: 13-4-13 上午9:49
  */
-public class Visible {
+public class Visible implements Serializable{
     int type;
     long listId;
 

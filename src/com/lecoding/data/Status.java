@@ -1,5 +1,6 @@
 package com.lecoding.data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  * User: usbuild
  * DateTime: 13-4-13 上午9:39
  */
-public class Status {
+public class Status implements Serializable{
     private Date createAt;
     private long id;
     private String mid;
@@ -19,7 +20,7 @@ public class Status {
     private String inReplyToStatusId;
     private String inReplyToUserId;
     private String inReplyToScreenName;
-    private String[] picIds;
+    private String[] picUrls;
     private String thumbnailPic;
     private String bmiddlePic;
     private String originalPic;
@@ -119,12 +120,12 @@ public class Status {
         this.inReplyToScreenName = inReplyToScreenName;
     }
 
-    public String[] getPicIds() {
-        return picIds;
+    public String[] getPicUrls() {
+        return picUrls;
     }
 
-    public void setPicIds(String[] picIds) {
-        this.picIds = picIds;
+    public void setPicUrls(String[] picUrls) {
+        this.picUrls = picUrls;
     }
 
     public String getThumbnailPic() {

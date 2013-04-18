@@ -34,7 +34,7 @@ public class JSONParser {
             status.setInReplyToStatusId(jsonObject.getString("in_reply_to_status_id"));
             status.setInReplyToUserId(jsonObject.getString("in_reply_to_user_id"));
             status.setInReplyToScreenName(jsonObject.getString("in_reply_to_screen_name"));
-            status.setPicIds(jsonObject.getJSONArray("pic_ids").join(",").split(","));
+            status.setPicUrls(jsonObject.getJSONArray("pic_urls").join(",").split(","));
             status.setThumbnailPic(jsonObject.has("thumbnail_pic") ? jsonObject.getString("thumbnail_pic") : null);
             status.setBmiddlePic(jsonObject.has("bmiddle_pic") ? jsonObject.getString("bmiddle_pic") : null);
             status.setOriginalPic(jsonObject.has("original_pic") ? jsonObject.getString("original_pic") : null);
