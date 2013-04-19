@@ -39,6 +39,23 @@
                 android:layout_marginRight="10dp"
                 />
 
+        <com.loopj.android.image.SmartImageView
+                android:id="@+id/thumbnail"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                />
+
+        <com.lecoding.view.PicList
+                android:id="@+id/piclist"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                />
+
+
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

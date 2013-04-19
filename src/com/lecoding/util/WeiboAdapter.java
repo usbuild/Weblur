@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.lecoding.R;
 import com.lecoding.data.Status;
+import com.lecoding.view.PicList;
 import com.loopj.android.image.SmartImageView;
 
 import java.util.List;
@@ -53,6 +54,8 @@ public class WeiboAdapter extends BaseAdapter {
             holder.username = (TextView) view.findViewById(R.id.weibo_item_user);
             holder.commentCount = (TextView) view.findViewById(R.id.weibo_item_comment_cnt);
             holder.repostCount = (TextView) view.findViewById(R.id.weibo_item_repost_cnt);
+            holder.picList = (PicList) view.findViewById(R.id.piclist);
+            holder.thumbnail = (SmartImageView) view.findViewById(R.id.thumbnail);
 
             view.setTag(holder);
         } else {
@@ -65,7 +68,18 @@ public class WeiboAdapter extends BaseAdapter {
         holder.username.setText(status.getUser().getName());
         holder.commentCount.setText("评论(" + status.getCommentsCount() + ")");
         holder.repostCount.setText("转发(" + status.getRepostsCount() + ")");
+        holder.thumbnail.setImageUrl(status.getThumbnailPic());
+        /*
+        List<PicDetail> picDetails = status.getPicDetails();
+        if (picDetails.size() > 0) {
+            List<String> urls = new ArrayList<String>();
+            for (PicDetail picDetail : picDetails) {
+                urls.add(picDetail.getThumbnailPic());
+            }
+            holder.picList.setImages(urls);
 
+        }
+        */
         return view;
     }
 
@@ -75,5 +89,7 @@ public class WeiboAdapter extends BaseAdapter {
         public TextView username;
         public TextView commentCount;
         public TextView repostCount;
+        public PicList picList;
+        public SmartImageView thumbnail;
     }
 }

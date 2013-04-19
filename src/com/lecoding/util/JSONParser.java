@@ -1,13 +1,17 @@
 package com.lecoding.util;
 
+import com.lecoding.data.PicDetail;
 import com.lecoding.data.Status;
 import com.lecoding.data.User;
 import com.lecoding.data.Visible;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -34,7 +38,6 @@ public class JSONParser {
             status.setInReplyToStatusId(jsonObject.getString("in_reply_to_status_id"));
             status.setInReplyToUserId(jsonObject.getString("in_reply_to_user_id"));
             status.setInReplyToScreenName(jsonObject.getString("in_reply_to_screen_name"));
-            status.setPicUrls(jsonObject.getJSONArray("pic_urls").join(",").split(","));
             status.setThumbnailPic(jsonObject.has("thumbnail_pic") ? jsonObject.getString("thumbnail_pic") : null);
             status.setBmiddlePic(jsonObject.has("bmiddle_pic") ? jsonObject.getString("bmiddle_pic") : null);
             status.setOriginalPic(jsonObject.has("original_pic") ? jsonObject.getString("original_pic") : null);
@@ -45,6 +48,13 @@ public class JSONParser {
             status.setAttitudesCount(jsonObject.getInt("attitudes_count"));
             status.setMlevel(jsonObject.getInt("mlevel"));
             status.setVisible(parseVisible(jsonObject.getJSONObject("visible")));
+
+            JSONArray array = jsonObject.getJSONArray("pic_urls");
+            List<PicDetail> picDetails = new ArrayList<PicDetail>();
+            for (int i = 0; i < array.length(); ++i) {
+                picDetails.add(parsePic(array.getJSONObject(i)));
+            }
+            status.setPicDetails(picDetails);
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -108,5 +118,15 @@ public class JSONParser {
             e.printStackTrace();
         }
         return user;
+    }
+
+    public static PicDetail parsePic(JSONObject jsonObject) {
+        PicDetail picDetail = new PicDetail();
+        try {
+            picDetail.setThumbnailPic(jsonObject.getString("thumbnail_pic"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return picDetail;
     }
 }

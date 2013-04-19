@@ -2,6 +2,7 @@ package com.lecoding.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,7 +21,7 @@ public class Status implements Serializable{
     private String inReplyToStatusId;
     private String inReplyToUserId;
     private String inReplyToScreenName;
-    private String[] picUrls;
+    private List<PicDetail> picDetails;
     private String thumbnailPic;
     private String bmiddlePic;
     private String originalPic;
@@ -31,6 +32,7 @@ public class Status implements Serializable{
     private int attitudesCount;
     private int mlevel;
     private Visible visible;
+
 
     public boolean isFavorited() {
         return favorited;
@@ -120,12 +122,12 @@ public class Status implements Serializable{
         this.inReplyToScreenName = inReplyToScreenName;
     }
 
-    public String[] getPicUrls() {
-        return picUrls;
+    public List<PicDetail> getPicDetails() {
+        return picDetails;
     }
 
-    public void setPicUrls(String[] picUrls) {
-        this.picUrls = picUrls;
+    public void setPicDetails(List<PicDetail> picDetails) {
+        this.picDetails = picDetails;
     }
 
     public String getThumbnailPic() {
