@@ -48,6 +48,16 @@ public class JSONParser {
             status.setAttitudesCount(jsonObject.getInt("attitudes_count"));
             status.setMlevel(jsonObject.getInt("mlevel"));
             status.setVisible(parseVisible(jsonObject.getJSONObject("visible")));
+            if (jsonObject.has("retweeted_status")) {
+                status.setRetweetedStatus(parseStatus(jsonObject.getJSONObject("retweeted_status")));
+            } else {
+                status.setRetweetedStatus(null);
+            }
+            if(jsonObject.has("pid")) {
+                status.setPid(jsonObject.getLong("pid"));
+            } else {
+                status.setPid(0);
+            }
 
             JSONArray array = jsonObject.getJSONArray("pic_urls");
             List<PicDetail> picDetails = new ArrayList<PicDetail>();

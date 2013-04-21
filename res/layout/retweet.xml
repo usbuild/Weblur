@@ -1,31 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
+              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:padding="10dp"
+              android:padding="5dp"
         >
 
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        <com.loopj.android.image.SmartImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:id="@+id/profile_img"
-                />
-
-        <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_10"
-                android:id="@+id/weibo_item_user"
-                />
-
-    </LinearLayout>
+    <TextView
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_10"
+            android:id="@+id/retweet_user"
+            android:layout_width="match_parent"
+            />
 
     <LinearLayout
             android:orientation="vertical"
@@ -35,32 +22,22 @@
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/weibo_item_text"
+                android:id="@+id/retweet_text"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 />
 
-        <com.lecoding.view.Retweet
-                android:id="@+id/retweet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="5dp"
-                android:visibility="gone"
-                android:background="@android:color/holo_green_light"
-                />
-
         <com.loopj.android.image.SmartImageView
-                android:id="@+id/thumbnail"
+                android:id="@+id/retweet_thumbnail"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 />
 
         <com.lecoding.view.PicList
-                android:id="@+id/piclist"
+                android:id="@+id/retweet_piclist"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
@@ -78,7 +55,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/weibo_item_comment_cnt"
+                    android:id="@+id/retweet_comment_cnt"
                     android:textSize="@dimen/text_size_7"
                     android:layout_marginRight="10dp"
                     />
@@ -86,7 +63,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/weibo_item_repost_cnt"
+                    android:id="@+id/retweet_repost_cnt"
                     android:textSize="@dimen/text_size_7"
                     android:layout_marginRight="10dp"
                     />

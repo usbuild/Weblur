@@ -9,7 +9,7 @@ import java.util.List;
  * User: usbuild
  * DateTime: 13-4-13 上午9:39
  */
-public class Status implements Serializable{
+public class Status implements Serializable {
     private Date createAt;
     private long id;
     private String mid;
@@ -32,7 +32,24 @@ public class Status implements Serializable{
     private int attitudesCount;
     private int mlevel;
     private Visible visible;
+    private Status retweetedStatus;
+    private long pid;
 
+    public long getPid() {
+        return pid;
+    }
+
+    public void setPid(long pid) {
+        this.pid = pid;
+    }
+
+    public Status getRetweetedStatus() {
+        return retweetedStatus;
+    }
+
+    public void setRetweetedStatus(Status retweetedStatus) {
+        this.retweetedStatus = retweetedStatus;
+    }
 
     public boolean isFavorited() {
         return favorited;

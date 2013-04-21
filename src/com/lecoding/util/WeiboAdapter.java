@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.lecoding.R;
 import com.lecoding.data.Status;
 import com.lecoding.view.PicList;
+import com.lecoding.view.Retweet;
 import com.loopj.android.image.SmartImageView;
 
 import java.util.List;
@@ -56,6 +57,7 @@ public class WeiboAdapter extends BaseAdapter {
             holder.repostCount = (TextView) view.findViewById(R.id.weibo_item_repost_cnt);
             holder.picList = (PicList) view.findViewById(R.id.piclist);
             holder.thumbnail = (SmartImageView) view.findViewById(R.id.thumbnail);
+            holder.retweet = (Retweet) view.findViewById(R.id.retweet);
 
             view.setTag(holder);
         } else {
@@ -68,7 +70,13 @@ public class WeiboAdapter extends BaseAdapter {
         holder.username.setText(status.getUser().getName());
         holder.commentCount.setText("评论(" + status.getCommentsCount() + ")");
         holder.repostCount.setText("转发(" + status.getRepostsCount() + ")");
-        holder.thumbnail.setImageUrl(status.getThumbnailPic());
+        if (status.getRetweetedStatus() != null) {
+            holder.retweet.setData(status.getRetweetedStatus());
+            holder.retweet.setVisibility(View.VISIBLE);
+        } else {
+            holder.thumbnail.setVisibility(View.GONE);
+            holder.thumbnail.setImageUrl(status.getThumbnailPic());
+        }
         /*
         List<PicDetail> picDetails = status.getPicDetails();
         if (picDetails.size() > 0) {
@@ -91,5 +99,6 @@ public class WeiboAdapter extends BaseAdapter {
         public TextView repostCount;
         public PicList picList;
         public SmartImageView thumbnail;
+        public Retweet retweet;
     }
 }
