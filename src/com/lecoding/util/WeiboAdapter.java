@@ -1,6 +1,7 @@
 package com.lecoding.util;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,12 +71,19 @@ public class WeiboAdapter extends BaseAdapter {
         holder.username.setText(status.getUser().getName());
         holder.commentCount.setText("评论(" + status.getCommentsCount() + ")");
         holder.repostCount.setText("转发(" + status.getRepostsCount() + ")");
+        if (status.getUser().getName().equals("头条新闻")) {
+            Log.i("BUG", "BUG");
+        }
         if (status.getRetweetedStatus() != null) {
             holder.retweet.setData(status.getRetweetedStatus());
             holder.retweet.setVisibility(View.VISIBLE);
-        } else {
             holder.thumbnail.setVisibility(View.GONE);
-            holder.thumbnail.setImageUrl(status.getThumbnailPic());
+        } else {
+            holder.thumbnail.setVisibility(View.VISIBLE);
+            holder.retweet.setVisibility(View.GONE);
+            if (status.getThumbnailPic() != null) {
+                holder.thumbnail.setImageUrl(status.getThumbnailPic());
+            }
         }
         /*
         List<PicDetail> picDetails = status.getPicDetails();

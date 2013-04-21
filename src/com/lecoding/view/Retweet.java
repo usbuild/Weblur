@@ -1,9 +1,7 @@
 package com.lecoding.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,8 +37,9 @@ public class Retweet extends LinearLayout {
         TextView rpCount = (TextView) findViewById(R.id.retweet_repost_cnt);
         username.setText(status.getUser().getName());
         text.setText(status.getText());
-
-        thumbnail.setImageUrl(status.getThumbnailPic());
+        if (status.getThumbnailPic() != null) {
+            thumbnail.setImageUrl(status.getThumbnailPic());
+        }
         cmtCount.setText("评论(" + String.valueOf(status.getCommentsCount()) + ")");
         rpCount.setText("转发(" + String.valueOf(status.getRepostsCount()) + ")");
     }
