@@ -68,6 +68,7 @@ public class BaseActivity extends Activity {
                 return false;
             }
         });
+        getActionBar().setSelectedNavigationItem(1);
         return super.onCreateOptionsMenu(menu);
     }
 

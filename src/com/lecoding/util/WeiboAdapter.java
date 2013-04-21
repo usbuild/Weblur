@@ -54,6 +54,7 @@ public class WeiboAdapter extends BaseAdapter {
             holder.text = (TextView) view.findViewById(R.id.weibo_item_text);
             holder.profileImg = (SmartImageView) view.findViewById(R.id.profile_img);
             holder.username = (TextView) view.findViewById(R.id.weibo_item_user);
+            holder.attitudeCount = (TextView) view.findViewById(R.id.weibo_item_attitude_cnt);
             holder.commentCount = (TextView) view.findViewById(R.id.weibo_item_comment_cnt);
             holder.repostCount = (TextView) view.findViewById(R.id.weibo_item_repost_cnt);
             holder.picList = (PicList) view.findViewById(R.id.piclist);
@@ -69,6 +70,7 @@ public class WeiboAdapter extends BaseAdapter {
         holder.text.setText(status.getText());
         holder.profileImg.setImageUrl(status.getUser().getProfileImageUrl());
         holder.username.setText(status.getUser().getName());
+        holder.attitudeCount.setText("赞(" + String.valueOf(status.getAttitudesCount()) + ")");
         holder.commentCount.setText("评论(" + status.getCommentsCount() + ")");
         holder.repostCount.setText("转发(" + status.getRepostsCount() + ")");
         if (status.getUser().getName().equals("头条新闻")) {
@@ -78,6 +80,7 @@ public class WeiboAdapter extends BaseAdapter {
             holder.retweet.setData(status.getRetweetedStatus());
             holder.retweet.setVisibility(View.VISIBLE);
             holder.thumbnail.setVisibility(View.GONE);
+            holder.picList.setVisibility(View.GONE);
         } else {
             holder.thumbnail.setVisibility(View.VISIBLE);
             holder.retweet.setVisibility(View.GONE);
@@ -105,6 +108,7 @@ public class WeiboAdapter extends BaseAdapter {
         public TextView username;
         public TextView commentCount;
         public TextView repostCount;
+        public TextView attitudeCount;
         public PicList picList;
         public SmartImageView thumbnail;
         public Retweet retweet;

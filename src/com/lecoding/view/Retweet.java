@@ -3,6 +3,7 @@ package com.lecoding.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.lecoding.R;
@@ -35,11 +36,21 @@ public class Retweet extends LinearLayout {
         SmartImageView thumbnail = (SmartImageView) findViewById(R.id.retweet_thumbnail);
         TextView cmtCount = (TextView) findViewById(R.id.retweet_comment_cnt);
         TextView rpCount = (TextView) findViewById(R.id.retweet_repost_cnt);
+        TextView attCount = (TextView) findViewById(R.id.retweet_attitude_cnt);
         username.setText(status.getUser().getName());
         text.setText(status.getText());
         if (status.getThumbnailPic() != null) {
             thumbnail.setImageUrl(status.getThumbnailPic());
+        } else {
+            thumbnail.setVisibility(View.GONE);
         }
+
+        if (status.getPicDetails().size() != 0) {
+
+        } else {
+            thumbnail.setVisibility(View.GONE);
+        }
+        attCount.setText("赞(" + String.valueOf(status.getAttitudesCount()) + ")");
         cmtCount.setText("评论(" + String.valueOf(status.getCommentsCount()) + ")");
         rpCount.setText("转发(" + String.valueOf(status.getRepostsCount()) + ")");
     }

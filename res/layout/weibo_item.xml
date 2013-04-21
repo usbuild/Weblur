@@ -48,7 +48,7 @@
                 android:orientation="vertical"
                 android:layout_margin="5dp"
                 android:visibility="gone"
-                android:background="@android:color/holo_green_light"
+                android:background="@drawable/retweet_background"
                 />
 
         <com.loopj.android.image.SmartImageView
@@ -78,7 +78,16 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/weibo_item_comment_cnt"
+                    android:id="@+id/weibo_item_attitude_cnt"
+                    android:textSize="@dimen/text_size_7"
+                    android:layout_marginRight="10dp"
+                    />
+
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/weibo_item_repost_cnt"
                     android:textSize="@dimen/text_size_7"
                     android:layout_marginRight="10dp"
                     />
@@ -86,7 +95,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/weibo_item_repost_cnt"
+                    android:id="@+id/weibo_item_comment_cnt"
                     android:textSize="@dimen/text_size_7"
                     android:layout_marginRight="10dp"
                     />

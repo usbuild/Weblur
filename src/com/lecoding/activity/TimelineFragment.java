@@ -44,6 +44,7 @@ public class TimelineFragment extends Fragment {
 
     public void updateListView(List<Status> statuses) {
         this.oldStatuses.addAll(0, statuses);
+        Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
         adapter.notifyDataSetChanged();
     }
 
@@ -83,7 +84,7 @@ public class TimelineFragment extends Fragment {
         protected String[] doInBackground(Void... voids) {
 
             StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
-            statusesAPI.homeTimeline(sinceId, 0, 20, 1, false, WeiboAPI.FEATURE.ALL, false, new RequestListener() {
+            statusesAPI.homeTimeline(sinceId, 0, 30, 1, false, WeiboAPI.FEATURE.ALL, false, new RequestListener() {
                 @Override
                 public void onComplete(String s) {
                     JSONTokener tokener = new JSONTokener(s);
