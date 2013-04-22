@@ -1,10 +1,10 @@
 package com.lecoding.activity;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.TextView;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.lecoding.data.PicDetail;
 import com.lecoding.data.Status;
@@ -19,7 +19,7 @@ import java.util.List;
  * User: usbuild
  * DateTime: 13-4-18 上午9:38
  */
-public class ViewWeiboActivity extends Activity {
+public class ViewWeiboActivity extends SherlockActivity {
     private TextView weiboText;
     private SmartImageView profileImg;
     private SmartImageView thumbnail;
@@ -28,7 +28,7 @@ public class ViewWeiboActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_weibo);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         weiboText = (TextView) findViewById(R.id.weibo_item_text);

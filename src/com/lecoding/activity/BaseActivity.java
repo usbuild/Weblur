@@ -1,14 +1,13 @@
 package com.lecoding.activity;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.ArrayAdapter;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
@@ -18,7 +17,7 @@ import com.weibo.sdk.android.Weibo;
  * User: usbuild
  * DateTime: 13-4-17 下午4:51
  */
-public class BaseActivity extends Activity {
+public class BaseActivity extends SherlockFragmentActivity {
     private static final String ACCESS_TOKEN = "2.008NuYtBnYdDWDd4866062744RXaVC";
     private static final String EXPIRES_IN = "157516713";
     public static Oauth2AccessToken token = null;
@@ -39,7 +38,7 @@ public class BaseActivity extends Activity {
         }
         activity = this;
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         setContentView(R.layout.main);
         groundFragment = new GroundFragment();
@@ -48,14 +47,13 @@ public class BaseActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity, menu);
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(getActionBar().getThemedContext(), R.array.NavItemList, android.R.layout.simple_list_item_1);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActionBar().setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
+        getSupportMenuInflater().inflate(R.menu.main_activity, menu);
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(getSupportActionBar().getThemedContext(), R.array.NavItemList, android.R.layout.simple_list_item_1);
+        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getSupportActionBar().setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
             @Override
             public boolean onNavigationItemSelected(int i, long l) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 switch (i) {
                     case 0:
                         fragmentTransaction.replace(R.id.mainframe, groundFragment);
@@ -68,7 +66,7 @@ public class BaseActivity extends Activity {
                 return false;
             }
         });
-        getActionBar().setSelectedNavigationItem(1);
+        getSupportActionBar().setSelectedNavigationItem(1);
         return super.onCreateOptionsMenu(menu);
     }
 

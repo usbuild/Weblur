@@ -1,11 +1,11 @@
 package com.lecoding.activity;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +50,7 @@ public class TimelineFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.gound, container, false);
+        View view = inflater.inflate(R.layout.ground, container, false);
         listView = (ListView) view.findViewById(R.id.ground_list);
         oldStatuses = new ArrayList<Status>();
 
@@ -96,13 +96,11 @@ public class TimelineFragment extends Fragment {
                             statuses.add(JSONParser.parseStatus(object));
                         }
 
-                        if (statuses.size() > 0) {
-                            Message message = new Message();
-                            message.obj = statuses;
-                            message.what = PUBLIC_LINE;
-                            sinceId = statuses.get(0).getId();
-                            handler.sendMessage(message);
-                        }
+                        Message message = new Message();
+                        message.obj = statuses;
+                        message.what = PUBLIC_LINE;
+                        sinceId = statuses.get(0).getId();
+                        handler.sendMessage(message);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -134,7 +132,6 @@ public class TimelineFragment extends Fragment {
             @Override
             @SuppressWarnings("unchecked")
             public boolean handleMessage(Message message) {
-                ((PullToRefreshListView) listView).onRefreshComplete();
                 switch (message.what) {
                     case WEIBO_ERROR:
                         Toast.makeText(TimelineFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
@@ -143,6 +140,7 @@ public class TimelineFragment extends Fragment {
                         updateListView((List<Status>) message.obj);
                         break;
                 }
+                ((PullToRefreshListView) listView).onRefreshComplete();
                 return true;
             }
         });

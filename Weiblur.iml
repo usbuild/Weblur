@@ -13,7 +13,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="actionbarsherlock" />
     <orderEntry type="library" name="libs" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.android:android:4.0.1.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.android:support-v4:r7" level="project" />
   </component>
 </module>
 
