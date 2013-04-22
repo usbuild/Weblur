@@ -2,6 +2,7 @@ package com.lecoding.view;
 
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
     private ImageView mRefreshViewImage;
     private ProgressBar mRefreshViewProgress;
     private TextView mRefreshViewLastUpdated;
+    private Button mLoadMore;
 
     private int mCurrentScrollState;
     private int mRefreshState;
@@ -99,12 +101,24 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 
         mRefreshState = TAP_TO_REFRESH;
 
+        //add load more button
+        mLoadMore = new Button(context);
+        Resources resources = getResources();
+        mLoadMore.setText(resources.getString(R.string.load_more));
+        mLoadMore.setBackgroundResource(R.drawable.load_more_button);
+
+
         addHeaderView(mRefreshView);
+        addFooterView(mLoadMore);
 
         super.setOnScrollListener(this);
 
         measureView(mRefreshView);
         mRefreshViewHeight = mRefreshView.getMeasuredHeight();
+    }
+
+    public void setLoadMore(OnClickListener listener) {
+        mLoadMore.setOnClickListener(listener);
     }
 
     @Override

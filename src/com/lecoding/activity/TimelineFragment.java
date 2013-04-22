@@ -36,16 +36,39 @@ public class TimelineFragment extends Fragment {
      */
     private final int WEIBO_ERROR = 0;
     private final int PUBLIC_LINE = 1;
+    private final int PAGE_SIZE = 5;
+    private final long UP_LOAD = 0;
+    private final long DOWN_LOAD = 1;
     Handler handler = null;
     private ListView listView;
     private long sinceId = 0;
+    private long maxId = 0;
     private List<Status> oldStatuses;
     private WeiboAdapter adapter;
 
-    public void updateListView(List<Status> statuses) {
-        this.oldStatuses.addAll(0, statuses);
-        Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
-        adapter.notifyDataSetChanged();
+
+    public void updateListView(List<Status> statuses, int direction) {
+        if (statuses.size() > 0) {
+            if (direction == 0) {
+                if (oldStatuses.size() == 0) maxId = statuses.get(statuses.size() - 1).getId() - 1;
+                this.oldStatuses.addAll(0, statuses);
+                if (statuses.size() > 0)
+                    sinceId = statuses.get(0).getId();
+            } else {
+                this.oldStatuses.addAll(statuses);
+                maxId = statuses.get(statuses.size() - 1).getId() - 1;
+            }
+            Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
+
+
+            int index = listView.getFirstVisiblePosition();
+            View v = listView.getChildAt(0);
+            int top = (v == null) ? 0 : v.getTop();
+
+            adapter.notifyDataSetChanged();
+
+            listView.setSelectionFromTop(index, top);
+        }
     }
 
     @Override
@@ -67,24 +90,34 @@ public class TimelineFragment extends Fragment {
             }
         });
 
+
+        ((PullToRefreshListView) listView).setLoadMore(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new GetDataTask().execute(0L, maxId, DOWN_LOAD);
+            }
+        });
         ((PullToRefreshListView) listView).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new GetDataTask().execute();
+                new GetDataTask().execute(sinceId, 0L, UP_LOAD);
             }
         });
+
+
         ((PullToRefreshListView) listView).prepareForRefresh();
-        new GetDataTask().execute();
+        new GetDataTask().execute(sinceId, 0L, UP_LOAD);
         return view;
     }
 
-    private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+    private class GetDataTask extends AsyncTask<Long, Void, String[]> {
 
         @Override
-        protected String[] doInBackground(Void... voids) {
+        protected String[] doInBackground(Long... integers) {
 
             StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
-            statusesAPI.homeTimeline(sinceId, 0, 30, 1, false, WeiboAPI.FEATURE.ALL, false, new RequestListener() {
+            final long type = integers[2];
+            statusesAPI.homeTimeline(integers[0], integers[1], PAGE_SIZE, 1, false, WeiboAPI.FEATURE.ALL, false, new RequestListener() {
                 @Override
                 public void onComplete(String s) {
                     JSONTokener tokener = new JSONTokener(s);
@@ -98,8 +131,10 @@ public class TimelineFragment extends Fragment {
 
                         Message message = new Message();
                         message.obj = statuses;
+                        if (type == UP_LOAD)
+                            message.arg1 = 0;
+                        else message.arg1 = 1;
                         message.what = PUBLIC_LINE;
-                        sinceId = statuses.get(0).getId();
                         handler.sendMessage(message);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -137,7 +172,7 @@ public class TimelineFragment extends Fragment {
                         Toast.makeText(TimelineFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
                         break;
                     case PUBLIC_LINE:
-                        updateListView((List<Status>) message.obj);
+                        updateListView((List<Status>) message.obj, message.arg1);
                         break;
                 }
                 ((PullToRefreshListView) listView).onRefreshComplete();
