@@ -36,7 +36,7 @@ public class TimelineFragment extends Fragment {
      */
     private final int WEIBO_ERROR = 0;
     private final int PUBLIC_LINE = 1;
-    private final int PAGE_SIZE = 5;
+    private final int PAGE_SIZE = 20;
     private final long UP_LOAD = 0;
     private final long DOWN_LOAD = 1;
     Handler handler = null;
@@ -60,14 +60,12 @@ public class TimelineFragment extends Fragment {
             }
             Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
 
-
-            int index = listView.getFirstVisiblePosition();
-            View v = listView.getChildAt(0);
-            int top = (v == null) ? 0 : v.getTop();
-
             adapter.notifyDataSetChanged();
-
-            listView.setSelectionFromTop(index, top);
+            if (direction == 0) {
+                listView.setSelection(1 + statuses.size());
+            } else {
+                listView.setSelection(1 + oldStatuses.size() - statuses.size());
+            }
         }
     }
 

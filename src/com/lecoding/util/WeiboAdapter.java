@@ -70,7 +70,7 @@ public class WeiboAdapter extends BaseAdapter {
         holder.text.setText(status.getText());
         holder.profileImg.setImageUrl(status.getUser().getProfileImageUrl());
         holder.username.setText(status.getUser().getName());
-        holder.attitudeCount.setText("赞(" + String.valueOf(status.getAttitudesCount()) + ")");
+        holder.attitudeCount.setText("赞(" + status.getAttitudesCount() + ")");
         holder.commentCount.setText("评论(" + status.getCommentsCount() + ")");
         holder.repostCount.setText("转发(" + status.getRepostsCount() + ")");
         if (status.getUser().getName().equals("头条新闻")) {
