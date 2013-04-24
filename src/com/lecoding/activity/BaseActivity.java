@@ -81,6 +81,10 @@ public class BaseActivity extends SherlockFragmentActivity {
                 Intent intent = new Intent(this, PostActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.menu_search:
+                Intent intent1 = new Intent(this, SearchActivity.class);
+                startActivity(intent1);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

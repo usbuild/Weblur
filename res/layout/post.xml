@@ -11,6 +11,7 @@
             android:singleLine="false"
             android:id="@+id/post_content"
             android:inputType="textMultiLine"
+            android:hint="@string/post_content_hint"
             android:gravity="top|left"
             android:lines="12"/>
 
