@@ -12,12 +12,13 @@
             android:id="@+id/post_content"
             android:inputType="textMultiLine"
             android:gravity="top|left"
-            />
+            android:lines="12"/>
 
     <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/post_weibo"
             android:id="@+id/post_weibo"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"/>
 </LinearLayout>
