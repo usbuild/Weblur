@@ -1,5 +1,6 @@
 package com.lecoding.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -75,6 +76,10 @@ public class BaseActivity extends SherlockFragmentActivity {
         switch (item.getItemId()) {
             case R.id.menu_login:
                 weibo.authorize(this, new WeiblurAuthListener());
+                return true;
+            case R.id.menu_post:
+                Intent intent = new Intent(this, PostActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
