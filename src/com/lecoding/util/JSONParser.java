@@ -1,9 +1,6 @@
 package com.lecoding.util;
 
-import com.lecoding.data.PicDetail;
-import com.lecoding.data.Status;
-import com.lecoding.data.User;
-import com.lecoding.data.Visible;
+import com.lecoding.data.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +50,7 @@ public class JSONParser {
             } else {
                 status.setRetweetedStatus(null);
             }
-            if(jsonObject.has("pid")) {
+            if (jsonObject.has("pid")) {
                 status.setPid(jsonObject.getLong("pid"));
             } else {
                 status.setPid(0);
@@ -138,5 +135,24 @@ public class JSONParser {
             e.printStackTrace();
         }
         return picDetail;
+    }
+
+    public static Comment parseComment(JSONObject jsonObject) {
+        Comment comment = new Comment();
+        try {
+            comment.setCreateAt(sdf.parse(jsonObject.getString("created_at")));
+            comment.setId(jsonObject.getLong("id"));
+            comment.setText(jsonObject.getString("text"));
+            comment.setSource(jsonObject.getString("source"));
+            comment.setUser(parseUser(jsonObject.getJSONObject("user")));
+            comment.setMid(jsonObject.getString("mid"));
+            comment.setIdstr(jsonObject.getString("idstr"));
+            comment.setStatus(parseStatus(jsonObject.getJSONObject("status")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return comment;
     }
 }
