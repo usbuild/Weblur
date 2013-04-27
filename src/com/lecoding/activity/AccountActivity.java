@@ -8,13 +8,14 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
+import com.weibo.sdk.android.api.SearchAPI;
 
 /**
  * Created with IntelliJ IDEA.
  * User: usbuild
  * DateTime: 13-4-24 下午7:55
  */
-public class SearchActivity extends SherlockActivity {
+public class AccountActivity extends SherlockActivity {
 
     private EditText searchContent;
     private Button searchBtn;
@@ -32,7 +33,8 @@ public class SearchActivity extends SherlockActivity {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String searchStr = searchContent.getText().toString();
+                SearchAPI searchAPI = new SearchAPI(BaseActivity.token);
             }
         });
 

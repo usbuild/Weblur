@@ -1,7 +1,8 @@
-package com.lecoding.activity;
+package com.lecoding.util;
 
 import android.os.Bundle;
 import android.widget.Toast;
+import com.lecoding.activity.BaseActivity;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboAuthListener;
 import com.weibo.sdk.android.WeiboDialogError;

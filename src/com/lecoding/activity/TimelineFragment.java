@@ -69,6 +69,11 @@ public class TimelineFragment extends Fragment {
         }
     }
 
+    public void loadData() {
+        ((PullToRefreshListView) listView).prepareForRefresh();
+        new GetDataTask().execute(sinceId, 0L, UP_LOAD);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ground, container, false);
@@ -101,10 +106,8 @@ public class TimelineFragment extends Fragment {
                 new GetDataTask().execute(sinceId, 0L, UP_LOAD);
             }
         });
+        if (BaseActivity.token != null) loadData();
 
-
-        ((PullToRefreshListView) listView).prepareForRefresh();
-        new GetDataTask().execute(sinceId, 0L, UP_LOAD);
         return view;
     }
 

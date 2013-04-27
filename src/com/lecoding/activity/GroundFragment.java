@@ -61,27 +61,7 @@ public class GroundFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        handler = new Handler(new Handler.Callback() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public boolean handleMessage(Message message) {
-                progressDialog.cancel();
-                switch (message.what) {
-                    case WEIBO_ERROR:
-                        Toast.makeText(GroundFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
-                        break;
-                    case PUBLIC_LINE:
-                        updateListView((List<Status>) message.obj);
-                        break;
-                }
-                return true;
-            }
-        });
-
+    public void loadData() {
         StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
         statusesAPI.publicTimeline(20, 1, false, new RequestListener() {
             @Override
@@ -117,6 +97,32 @@ public class GroundFragment extends Fragment {
         });
         progressDialog = ProgressDialog.show(getActivity(), "",
                 "正在拉取数据", true);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        handler = new Handler(new Handler.Callback() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public boolean handleMessage(Message message) {
+                progressDialog.cancel();
+                switch (message.what) {
+                    case WEIBO_ERROR:
+                        Toast.makeText(GroundFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
+                        break;
+                    case PUBLIC_LINE:
+                        updateListView((List<Status>) message.obj);
+                        break;
+                }
+                return true;
+            }
+        });
+
+        if (BaseActivity.token != null) {
+            loadData();
+        }
     }
 
 }

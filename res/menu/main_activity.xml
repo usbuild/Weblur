@@ -8,12 +8,12 @@
             android:title="@string/menu_login"
             android:showAsAction="always"
             />
-    <item
-            android:id="@+id/menu_search"
-            android:title="@string/menu_search"
-            android:icon="@drawable/action_search"
-            android:showAsAction="always|collapseActionView"
-            android:actionViewClass="android.widget.SearchView"/>
+    <!--<item-->
+            <!--android:id="@+id/menu_search"-->
+            <!--android:title="@string/menu_search"-->
+            <!--android:icon="@drawable/action_search"-->
+            <!--android:showAsAction="always|collapseActionView"-->
+            <!--android:actionViewClass="android.widget.SearchView"/>-->
     <item
             android:id="@+id/menu_post"
             android:icon="@drawable/menu_post"
