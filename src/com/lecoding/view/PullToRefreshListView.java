@@ -66,6 +66,10 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
         init(context);
     }
 
+    public Button getmLoadMore() {
+        return mLoadMore;
+    }
+
     private void init(Context context) {
         // Load all of the animations we need in code rather than through XML
         mFlipAnimation = new RotateAnimation(0, -180,

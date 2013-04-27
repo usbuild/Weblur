@@ -43,7 +43,7 @@ public class TimelineFragment extends Fragment {
     private ListView listView;
     private long sinceId = 0;
     private long maxId = 0;
-    private List<Status> oldStatuses;
+    private List<Status> oldStatuses = new ArrayList<Status>();
     private WeiboAdapter adapter;
 
 
@@ -78,9 +78,8 @@ public class TimelineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ground, container, false);
         listView = (ListView) view.findViewById(R.id.ground_list);
-        oldStatuses = new ArrayList<Status>();
 
-        adapter = new WeiboAdapter(this.getActivity(), oldStatuses);
+
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -154,8 +153,6 @@ public class TimelineFragment extends Fragment {
                     handler.sendMessage(message);
                 }
             });
-
-
             return null;
         }
     }
@@ -163,6 +160,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adapter = new WeiboAdapter(this.getActivity(), oldStatuses);
 
         handler = new Handler(new Handler.Callback() {
             @Override

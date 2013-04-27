@@ -1,7 +1,7 @@
 package com.lecoding.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +16,7 @@ import com.lecoding.R;
 import com.lecoding.data.Status;
 import com.lecoding.util.JSONParser;
 import com.lecoding.util.WeiboAdapter;
+import com.lecoding.view.PullToRefreshListView;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.net.RequestListener;
@@ -34,18 +35,25 @@ public class GroundFragment extends Fragment {
      */
     private final int WEIBO_ERROR = 0;
     private final int PUBLIC_LINE = 1;
+    private final int PAGE_SIZE = 30;
     Handler handler = null;
     private ListView listView;
-    private ProgressDialog progressDialog;
+    private WeiboAdapter adapter;
+    private List<Status> oldStatuses = new ArrayList<Status>();
 
     public void updateListView(List<Status> statuses) {
-        listView.setAdapter(new WeiboAdapter(this.getActivity(), statuses));
+        oldStatuses.addAll(0, statuses);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ground, container, false);
         listView = (ListView) view.findViewById(R.id.ground_list);
+        ((PullToRefreshListView) listView).getmLoadMore().setVisibility(View.GONE);
+
+
+        listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -56,58 +64,82 @@ public class GroundFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
+        ((PullToRefreshListView) listView).setLoadMore(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new GetDataTask().execute();
+            }
+        });
+        ((PullToRefreshListView) listView).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new GetDataTask().execute();
+            }
+        });
+        if (BaseActivity.token != null) loadData();
 
         return view;
     }
 
     public void loadData() {
-        StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
-        statusesAPI.publicTimeline(20, 1, false, new RequestListener() {
-            @Override
-            public void onComplete(String s) {
-                JSONTokener tokener = new JSONTokener(s);
-                try {
-                    JSONArray array = (JSONArray) ((JSONObject) tokener.nextValue()).get("statuses");
-                    List<Status> statuses = new ArrayList<Status>();
-                    for (int i = 0; i < array.length(); ++i) {
-                        JSONObject object = array.getJSONObject(i);
-                        statuses.add(JSONParser.parseStatus(object));
-                    }
-                    Message message = new Message();
-                    message.obj = statuses;
-                    message.what = PUBLIC_LINE;
-                    handler.sendMessage(message);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onIOException(IOException e) {
-
-            }
-
-            @Override
-            public void onError(WeiboException e) {
-                Message message = new Message();
-                message.what = WEIBO_ERROR;
-                handler.sendMessage(message);
-            }
-        });
-        progressDialog = ProgressDialog.show(getActivity(), "",
-                "正在拉取数据", true);
+        ((PullToRefreshListView) listView).prepareForRefresh();
+        new GetDataTask().execute();
     }
+
+
+    private class GetDataTask extends AsyncTask<Long, Void, String[]> {
+
+        @Override
+        protected String[] doInBackground(Long... integers) {
+
+            StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
+            statusesAPI.publicTimeline(PAGE_SIZE, 1, false, new RequestListener() {
+                @Override
+                public void onComplete(String s) {
+                    JSONTokener tokener = new JSONTokener(s);
+                    try {
+                        JSONArray array = (JSONArray) ((JSONObject) tokener.nextValue()).get("statuses");
+                        List<com.lecoding.data.Status> statuses = new ArrayList<com.lecoding.data.Status>();
+                        for (int i = 0; i < array.length(); ++i) {
+                            JSONObject object = array.getJSONObject(i);
+                            statuses.add(JSONParser.parseStatus(object));
+                        }
+
+                        Message message = new Message();
+                        message.obj = statuses;
+                        message.what = PUBLIC_LINE;
+                        handler.sendMessage(message);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onIOException(IOException e) {
+
+                }
+
+                @Override
+                public void onError(WeiboException e) {
+                    Message message = new Message();
+                    message.what = WEIBO_ERROR;
+                    handler.sendMessage(message);
+                }
+            });
+            return null;
+        }
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adapter = new WeiboAdapter(this.getActivity(), oldStatuses);
 
         handler = new Handler(new Handler.Callback() {
             @Override
             @SuppressWarnings("unchecked")
             public boolean handleMessage(Message message) {
-                progressDialog.cancel();
                 switch (message.what) {
                     case WEIBO_ERROR:
                         Toast.makeText(GroundFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
@@ -116,13 +148,10 @@ public class GroundFragment extends Fragment {
                         updateListView((List<Status>) message.obj);
                         break;
                 }
+                ((PullToRefreshListView) listView).onRefreshComplete();
                 return true;
             }
         });
-
-        if (BaseActivity.token != null) {
-            loadData();
-        }
     }
 
 }
