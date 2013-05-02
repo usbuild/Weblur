@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -36,9 +37,10 @@ public class PostActivity extends SherlockActivity {
         postWeibo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                statusesAPI.update(postContent.getText().toString(), "+30.163663", "+102.930982", new RequestListener() {
+                statusesAPI.update(postContent.getText().toString(), "+32.057582", "+118.77801", new RequestListener() {
                     @Override
                     public void onComplete(String response) {
+                        Toast.makeText(getApplicationContext(), "发表成功", Toast.LENGTH_LONG).show();
                         PostActivity.this.finish();
                     }
 
