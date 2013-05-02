@@ -64,6 +64,8 @@ public class ViewWeiboActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
 
         commentList = new ListView(this);
+        //set list options
+        commentList.setHeaderDividersEnabled(false);
         commentList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         View view = getLayoutInflater().inflate(R.layout.view_weibo, null);
@@ -96,21 +98,21 @@ public class ViewWeiboActivity extends SherlockActivity {
         weiboText.setText(status.getText());
         profileImg.setImageUrl(status.getUser().getProfileImageUrl());
 
+        List<PicDetail> picDetails = status.getPicDetails();
 
         if (status.getRetweetedStatus() != null) {
             retweet.setVisibility(View.VISIBLE);
             retweet.setData(status.getRetweetedStatus());
         } else {
-            thumbnail.setImageUrl(status.getBmiddlePic());
-        }
-
-        List<PicDetail> picDetails = status.getPicDetails();
-        if (picDetails.size() > 0) {
-            List<String> urls = new ArrayList<String>();
-            for (PicDetail picDetail : picDetails) {
-                urls.add(picDetail.getThumbnailPic());
+            if (picDetails.size() <= 1) {
+                thumbnail.setImageUrl(status.getBmiddlePic());
+            } else {
+                List<String> urls = new ArrayList<String>();
+                for (PicDetail picDetail : picDetails) {
+                    urls.add(picDetail.getThumbnailPic());
+                }
+                picList.setImages(urls);
             }
-            picList.setImages(urls);
         }
 
         handler = new Handler(new Handler.Callback() {
