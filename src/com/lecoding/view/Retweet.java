@@ -37,7 +37,8 @@ public class Retweet extends LinearLayout {
         TextView cmtCount = (TextView) findViewById(R.id.retweet_comment_cnt);
         TextView rpCount = (TextView) findViewById(R.id.retweet_repost_cnt);
         TextView attCount = (TextView) findViewById(R.id.retweet_attitude_cnt);
-        username.setText(status.getUser().getName());
+        if (status.getUser() != null)
+            username.setText(status.getUser().getName());
         text.setText(status.getText());
         if (status.getThumbnailPic() != null) {
             thumbnail.setImageUrl(status.getThumbnailPic());

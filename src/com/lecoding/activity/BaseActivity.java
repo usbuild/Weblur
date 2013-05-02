@@ -31,6 +31,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 
     private GroundFragment groundFragment;
     private TimelineFragment timelineFragment;
+    private MyTimelineFragment myTimelineFragment;
 
     private Handler handler;
 
@@ -49,6 +50,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 
         groundFragment = new GroundFragment();
         timelineFragment = new TimelineFragment();
+        myTimelineFragment = new MyTimelineFragment();
 
         handler = new Handler(new Handler.Callback() {
             @Override
@@ -130,6 +132,8 @@ public class BaseActivity extends SherlockFragmentActivity {
                     case 1:
                         fragmentTransaction.replace(R.id.mainframe, timelineFragment);
                         break;
+                    case 2:
+                        fragmentTransaction.replace(R.id.mainframe, myTimelineFragment);
                 }
                 fragmentTransaction.commit();
                 return false;

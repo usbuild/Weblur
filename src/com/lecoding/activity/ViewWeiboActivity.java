@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
@@ -61,9 +62,18 @@ public class ViewWeiboActivity extends SherlockActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.view_weibo);
+
+        commentList = new ListView(this);
+        commentList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        View view = getLayoutInflater().inflate(R.layout.view_weibo, null);
+        commentList.addHeaderView(view);
+
+        setContentView(commentList);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
         comments = new ArrayList<Comment>();
 
         weiboText = (TextView) findViewById(R.id.weibo_item_text);
@@ -75,7 +85,6 @@ public class ViewWeiboActivity extends SherlockActivity {
         attitudeCount = (TextView) findViewById(R.id.weibo_item_attitude_cnt);
         commentCount = (TextView) findViewById(R.id.weibo_item_comment_cnt);
         repostCount = (TextView) findViewById(R.id.weibo_item_repost_cnt);
-        commentList = (ListView) findViewById(R.id.comment_view);
 
 
         Status status = (Status) getIntent().getSerializableExtra("status");

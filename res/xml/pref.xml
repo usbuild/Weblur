@@ -2,6 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
             android:key="pref_key_auto_delete"
-            android:summary="@string/pref_image_show"
+            android:title="@string/pref_image_show"
             android:defaultValue="true"/>
 </PreferenceScreen>
