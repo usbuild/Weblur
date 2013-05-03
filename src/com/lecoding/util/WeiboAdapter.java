@@ -77,7 +77,7 @@ public class WeiboAdapter extends BaseAdapter {
             Log.i("BUG", "BUG");
         }
         if (status.getRetweetedStatus() != null) {
-            holder.retweet.setData(status.getRetweetedStatus());
+            holder.retweet.setData(status.getRetweetedStatus(), false);
             holder.retweet.setVisibility(View.VISIBLE);
             holder.thumbnail.setVisibility(View.GONE);
             holder.picList.setVisibility(View.GONE);

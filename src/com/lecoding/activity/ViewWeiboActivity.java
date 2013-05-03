@@ -90,7 +90,7 @@ public class ViewWeiboActivity extends SherlockActivity {
         repostCount = (TextView) findViewById(R.id.weibo_item_repost_cnt);
 
 
-        Status status = (Status) getIntent().getSerializableExtra("status");
+        final Status status = (Status) getIntent().getSerializableExtra("status");
 
         attitudeCount.setText("赞(" + status.getAttitudesCount() + ")");
         commentCount.setText("评论(" + status.getCommentsCount() + ")");
@@ -103,7 +103,7 @@ public class ViewWeiboActivity extends SherlockActivity {
 
         if (status.getRetweetedStatus() != null) {
             retweet.setVisibility(View.VISIBLE);
-            retweet.setData(status.getRetweetedStatus());
+            retweet.setData(status.getRetweetedStatus(), true);
         } else {
             if (picDetails.size() <= 1) {
                 thumbnail.setImageUrl(status.getBmiddlePic());
@@ -111,7 +111,7 @@ public class ViewWeiboActivity extends SherlockActivity {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(ViewWeiboActivity.this, ViewImageActivity.class);
-                        intent.putExtra("uri", thumbnail.getUrl());
+                        intent.putExtra("uri", status.getOriginalPic());
                         startActivity(intent);
                     }
                 });

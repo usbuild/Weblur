@@ -18,6 +18,7 @@ import com.loopj.android.image.SmartImageView;
  * DateTime: 13-4-21 上午9:25
  */
 public class Retweet extends LinearLayout {
+
     public Retweet(Context context) {
         super(context);
     }
@@ -32,7 +33,7 @@ public class Retweet extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
-    public void setData(Status status) {
+    public void setData(final Status status, boolean origin) {
         TextView username = (TextView) findViewById(R.id.retweet_user);
         TextView text = (TextView) findViewById(R.id.retweet_text);
         SmartImageView thumbnail = (SmartImageView) findViewById(R.id.retweet_thumbnail);
@@ -43,13 +44,17 @@ public class Retweet extends LinearLayout {
             username.setText(status.getUser().getName());
         text.setText(status.getText());
         if (status.getThumbnailPic() != null) {
-            thumbnail.setImageUrl(status.getThumbnailPic());
-            final String url = thumbnail.getUrl();
+            if (origin) {
+                thumbnail.setImageUrl(status.getBmiddlePic());
+            } else {
+
+                thumbnail.setImageUrl(status.getThumbnailPic());
+            }
             thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getContext(), ViewImageActivity.class);
-                    intent.putExtra("uri", url);
+                    intent.putExtra("uri", status.getOriginalPic());
                     getContext().startActivity(intent);
                 }
             });
