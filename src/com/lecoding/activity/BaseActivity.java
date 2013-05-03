@@ -21,8 +21,8 @@ import com.weibo.sdk.android.*;
  * DateTime: 13-4-17 下午4:51
  */
 public class BaseActivity extends SherlockFragmentActivity {
-    //    private static final String ACCESS_TOKEN = "2.008NuYtBnYdDWDd4866062744RXaVC";
-//    private static final String EXPIRES_IN = "157516713";
+        private static final String ACCESS_TOKEN = "2.008NuYtBnYdDWDd4866062744RXaVC";
+    private static final String EXPIRES_IN = "157516713";
     public static Oauth2AccessToken token = null;
     private static final String APP_KEY = "3222108305";
     private static final String REDIRECT_URI = "http://usbuild.duapp.com/weiblur.php";
@@ -51,6 +51,7 @@ public class BaseActivity extends SherlockFragmentActivity {
         groundFragment = new GroundFragment();
         timelineFragment = new TimelineFragment();
         myTimelineFragment = new MyTimelineFragment();
+//        token = new Oauth2AccessToken(ACCESS_TOKEN, EXPIRES_IN);
 
         handler = new Handler(new Handler.Callback() {
             @Override

@@ -1,5 +1,6 @@
 package com.lecoding.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -106,6 +107,14 @@ public class ViewWeiboActivity extends SherlockActivity {
         } else {
             if (picDetails.size() <= 1) {
                 thumbnail.setImageUrl(status.getBmiddlePic());
+                thumbnail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(ViewWeiboActivity.this, ViewImageActivity.class);
+                        intent.putExtra("uri", thumbnail.getUrl());
+                        startActivity(intent);
+                    }
+                });
             } else {
                 List<String> urls = new ArrayList<String>();
                 for (PicDetail picDetail : picDetails) {

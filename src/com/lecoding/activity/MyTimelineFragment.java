@@ -150,6 +150,7 @@ public class MyTimelineFragment extends Fragment {
                 public void onError(WeiboException e) {
                     Message message = new Message();
                     message.what = WEIBO_ERROR;
+                    message.obj = e.getMessage();
                     handler.sendMessage(message);
                 }
             });
@@ -168,7 +169,7 @@ public class MyTimelineFragment extends Fragment {
             public boolean handleMessage(Message message) {
                 switch (message.what) {
                     case WEIBO_ERROR:
-                        Toast.makeText(MyTimelineFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MyTimelineFragment.this.getActivity(), "拉取微博信息出错", Toast.LENGTH_LONG).show();
                         break;
                     case PUBLIC_LINE:
                         updateListView((List<Status>) message.obj, message.arg1);

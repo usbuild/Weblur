@@ -1,12 +1,14 @@
 package com.lecoding.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.lecoding.R;
+import com.lecoding.activity.ViewImageActivity;
 import com.lecoding.data.Status;
 import com.loopj.android.image.SmartImageView;
 
@@ -42,6 +44,15 @@ public class Retweet extends LinearLayout {
         text.setText(status.getText());
         if (status.getThumbnailPic() != null) {
             thumbnail.setImageUrl(status.getThumbnailPic());
+            final String url = thumbnail.getUrl();
+            thumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), ViewImageActivity.class);
+                    intent.putExtra("uri", url);
+                    getContext().startActivity(intent);
+                }
+            });
         } else {
             thumbnail.setVisibility(View.GONE);
         }
