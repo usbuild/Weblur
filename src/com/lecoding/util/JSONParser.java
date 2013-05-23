@@ -39,7 +39,7 @@ public class JSONParser {
             status.setBmiddlePic(jsonObject.has("bmiddle_pic") ? jsonObject.getString("bmiddle_pic") : null);
             status.setOriginalPic(jsonObject.has("original_pic") ? jsonObject.getString("original_pic") : null);
             status.setGeo(jsonObject.getString("geo"));
-            status.setUser(parseUser(jsonObject.getJSONObject("user")));
+            status.setUser(jsonObject.has("user") ? parseUser(jsonObject.getJSONObject("user")) : null);
             status.setRepostsCount(jsonObject.getInt("reposts_count"));
             status.setCommentsCount(jsonObject.getInt("comments_count"));
             status.setAttitudesCount(jsonObject.getInt("attitudes_count"));
@@ -119,6 +119,7 @@ public class JSONParser {
             user.setStar(jsonObject.getInt("star"));
             user.setMbtype(jsonObject.getInt("mbtype"));
             user.setMbrank(jsonObject.getInt("mbrank"));
+            user.setStatus(jsonObject.has("status") ? parseStatus(jsonObject.getJSONObject("status")) : null);
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {

@@ -1,12 +1,11 @@
 package com.lecoding.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -14,7 +13,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.lecoding.data.User;
 import com.lecoding.util.JSONParser;
-import com.loopj.android.image.SmartImage;
 import com.loopj.android.image.SmartImageView;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.UsersAPI;
@@ -31,6 +29,9 @@ public class AccountActivity extends SherlockActivity {
 
     SmartImageView profileImg;
     Handler handler;
+    TextView screenName;
+    TextView descreption;
+    TextView status;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +40,9 @@ public class AccountActivity extends SherlockActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("主页");
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
+        screenName = (TextView) findViewById(R.id.screen_name);
+        descreption = (TextView) findViewById(R.id.descreption);
+        status = (TextView) findViewById(R.id.status);
 
         Intent intent = getIntent();
         long uid = intent.getLongExtra("uid", 0);
@@ -94,6 +98,9 @@ public class AccountActivity extends SherlockActivity {
 
     public void setData(User user) {
         profileImg.setImageUrl(user.getProfileImageUrl());
+        screenName.setText(user.getScreenName());
+        descreption.setText(user.getDescription());
+        status.setText(user.getStatus() != null ? user.getStatus().getText() : "");
     }
 
 

@@ -82,6 +82,9 @@ public class ViewWeiboActivity extends SherlockActivity {
 
         weiboText = (TextView) findViewById(R.id.weibo_item_text);
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
+
+
+
         thumbnail = (SmartImageView) findViewById(R.id.thumbnail);
         picList = (PicList) findViewById(R.id.piclist);
         retweet = (Retweet) findViewById(R.id.retweet);
@@ -135,6 +138,15 @@ public class ViewWeiboActivity extends SherlockActivity {
                         break;
                 }
                 return false;
+            }
+        });
+
+        profileImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewWeiboActivity.this, AccountActivity.class);
+                intent.putExtra("uid", status.getUser().getId());
+                startActivity(intent);
             }
         });
 

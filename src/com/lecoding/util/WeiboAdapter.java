@@ -1,6 +1,7 @@
 package com.lecoding.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.lecoding.R;
+import com.lecoding.activity.AccountActivity;
 import com.lecoding.data.Status;
 import com.lecoding.view.PicList;
 import com.lecoding.view.Retweet;
@@ -23,9 +25,11 @@ import java.util.List;
 public class WeiboAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Status> statuses;
+    Context context;
 
     public WeiboAdapter(Context context, List<Status> statuses) {
         inflater = LayoutInflater.from(context);
+        this.context = context;
         this.statuses = statuses;
     }
 
@@ -66,16 +70,21 @@ public class WeiboAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        Status status = statuses.get(i);
+        final Status status = statuses.get(i);
         holder.text.setText(status.getText());
         holder.profileImg.setImageUrl(status.getUser().getProfileImageUrl());
+        holder.profileImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, AccountActivity.class);
+                intent.putExtra("uid", status.getUser().getId());
+                context.startActivity(intent);
+            }
+        });
         holder.username.setText(status.getUser().getName());
         holder.attitudeCount.setText("赞(" + status.getAttitudesCount() + ")");
         holder.commentCount.setText("评论(" + status.getCommentsCount() + ")");
         holder.repostCount.setText("转发(" + status.getRepostsCount() + ")");
-        if (status.getUser().getName().equals("头条新闻")) {
-            Log.i("BUG", "BUG");
-        }
         if (status.getRetweetedStatus() != null) {
             holder.retweet.setData(status.getRetweetedStatus(), false);
             holder.retweet.setVisibility(View.VISIBLE);
