@@ -25,5 +25,6 @@
     <string name="user_info">个人信息</string>
     <string name="pref_image_show">显示图片</string>
     <string name="other_settings">其它设置</string>
+    <string name="use_position">地理位置</string>
 
 </resources>

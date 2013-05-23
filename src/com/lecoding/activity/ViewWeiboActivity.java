@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -136,6 +137,30 @@ public class ViewWeiboActivity extends SherlockActivity {
                 return false;
             }
         });
+
+        repostCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ViewWeiboActivity.this, "repost", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        commentCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ViewWeiboActivity.this, "Comment", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        attitudeCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ViewWeiboActivity.this, "attitude", Toast.LENGTH_LONG).show();
+            }
+        });
+
 
         commentAdapter = new CommentAdapter(this, comments);
         commentList.setAdapter(commentAdapter);

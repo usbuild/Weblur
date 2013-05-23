@@ -15,6 +15,27 @@
             android:gravity="top|left"
             android:lines="12"/>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/use_position"
+                android:id="@+id/use_position"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text=""
+                android:id="@+id/textView"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"/>
+    </LinearLayout>
+
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
