@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
@@ -32,6 +33,9 @@ public class AccountActivity extends SherlockActivity {
     TextView screenName;
     TextView descreption;
     TextView status;
+    Button weiboButton;
+    Button followButton;
+    Button fansButton;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +47,9 @@ public class AccountActivity extends SherlockActivity {
         screenName = (TextView) findViewById(R.id.screen_name);
         descreption = (TextView) findViewById(R.id.descreption);
         status = (TextView) findViewById(R.id.status);
+        weiboButton = (Button) findViewById(R.id.weibo_btn);
+        followButton = (Button) findViewById(R.id.follow_btn);
+        fansButton = (Button) findViewById(R.id.fans_btn);
 
         Intent intent = getIntent();
         long uid = intent.getLongExtra("uid", 0);
@@ -101,6 +108,9 @@ public class AccountActivity extends SherlockActivity {
         screenName.setText(user.getScreenName());
         descreption.setText(user.getDescription());
         status.setText(user.getStatus() != null ? user.getStatus().getText() : "");
+        weiboButton.setText("微博\n" + user.getStatusesCount());
+        followButton.setText("关注\n" + user.getFriendsCount());
+        fansButton.setText("粉丝\n" + user.getFollowersCount());
     }
 
 
