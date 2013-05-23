@@ -22,9 +22,6 @@ public class PicList extends LinearLayout {
         super(context, attrs);
     }
 
-    public PicList(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
 
     public void setImages(List<String> list) {
         this.removeAllViews();

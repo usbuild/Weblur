@@ -12,7 +12,13 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
+import com.lecoding.data.User;
 import com.weibo.sdk.android.*;
+import com.weibo.sdk.android.api.AccountAPI;
+import com.weibo.sdk.android.api.StatusesAPI;
+import com.weibo.sdk.android.net.RequestListener;
+
+import java.io.IOException;
 
 
 /**
@@ -28,6 +34,8 @@ public class BaseActivity extends SherlockFragmentActivity {
     private static final String REDIRECT_URI = "http://usbuild.duapp.com/weiblur.php";
     protected Weibo weibo;
     public static BaseActivity activity;
+
+    public static long uid;
 
     private GroundFragment groundFragment;
     private TimelineFragment timelineFragment;
@@ -59,6 +67,24 @@ public class BaseActivity extends SherlockFragmentActivity {
                 switch (message.what) {
                     case WB_SUCCESS:
                         BaseActivity.token = (Oauth2AccessToken) message.obj;
+
+                        AccountAPI accountAPI = new AccountAPI(token);
+                        accountAPI.getUid(new RequestListener() {
+                            @Override
+                            public void onComplete(String response) {
+                                uid = Long.parseLong(response.substring(7, response.length() - 1).trim());
+                            }
+
+                            @Override
+                            public void onIOException(IOException e) {
+
+                            }
+
+                            @Override
+                            public void onError(WeiboException e) {
+
+                            }
+                        });
                         timelineFragment.loadData();
                         break;
                     case WB_EXCPETION:
@@ -148,7 +174,7 @@ public class BaseActivity extends SherlockFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_login:
-                Intent intent1 = new Intent(this, AccountActivity.class);
+                Intent intent1 = new Intent(this, SettingActivity.class);
                 startActivity(intent1);
                 return true;
             case R.id.menu_post:

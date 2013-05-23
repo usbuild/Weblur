@@ -5,7 +5,7 @@
           android:versionName="1.0">
 
     <uses-sdk
-            android:minSdkVersion="4"
+            android:minSdkVersion="8"
             android:targetSdkVersion="17"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -34,8 +34,9 @@
         <activity android:name=".activity.BaseActivity"/>
         <activity android:name=".activity.ViewWeiboActivity"/>
         <activity android:name=".activity.PostActivity"/>
-        <activity android:name=".activity.AccountActivity"/>
+        <activity android:name=".activity.SettingActivity"/>
         <activity android:name=".activity.ViewImageActivity"/>
+        <activity android:name=".activity.AccountActivity"/>
     </application>
 
 </manifest>

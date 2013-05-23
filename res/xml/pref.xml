@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+            android:key="pref_key_setting_account"
+            android:title="@string/my_account"
+            />
     <CheckBoxPreference
-            android:key="pref_key_auto_delete"
+            android:key="pref_key_show_img"
             android:title="@string/pref_image_show"
-            android:defaultValue="true"/>
+            android:defaultValue="true"
+            />
 </PreferenceScreen>
