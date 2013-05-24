@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import com.lecoding.data.User;
 import com.lecoding.util.JSONParser;
 import com.loopj.android.image.SmartImageView;
 import com.weibo.sdk.android.WeiboException;
+import com.weibo.sdk.android.api.FriendshipsAPI;
 import com.weibo.sdk.android.api.UsersAPI;
 import com.weibo.sdk.android.net.RequestListener;
 import org.json.JSONException;
@@ -36,13 +38,18 @@ public class AccountActivity extends SherlockActivity {
     Button weiboButton;
     Button followButton;
     Button fansButton;
+    Button flwBtn;
+    Button msgBtn;
+    private static final int LOAD_DATA = 0;
+    private static final int FOLLOW = 1;
+    private static final int UNFOLLOW = 2;
+    User user = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.account);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("主页");
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
         screenName = (TextView) findViewById(R.id.screen_name);
         descreption = (TextView) findViewById(R.id.descreption);
@@ -50,6 +57,8 @@ public class AccountActivity extends SherlockActivity {
         weiboButton = (Button) findViewById(R.id.weibo_btn);
         followButton = (Button) findViewById(R.id.follow_btn);
         fansButton = (Button) findViewById(R.id.fans_btn);
+        flwBtn = (Button) findViewById(R.id.befan_btn);
+        msgBtn = (Button) findViewById(R.id.pm_btn);
 
         Intent intent = getIntent();
         long uid = intent.getLongExtra("uid", 0);
@@ -61,20 +70,81 @@ public class AccountActivity extends SherlockActivity {
         handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                setData((User) message.obj);
+                switch (message.what) {
+                    case LOAD_DATA:
+                        setData((User) message.obj);
+                        break;
+                    case FOLLOW:
+                        refreshData(user.getId());
+                        break;
+                    case UNFOLLOW:
+                        refreshData(user.getId());
+                        break;
+                }
                 return true;
             }
         });
+        if (uid == BaseActivity.uid) flwBtn.setVisibility(View.GONE);
 
+        final FriendshipsAPI friendshipsAPI = new FriendshipsAPI(BaseActivity.token);
+        flwBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (user != null)
+                    if ((Boolean) flwBtn.getTag()) {
+                        friendshipsAPI.create(user.getId(), user.getScreenName(), new RequestListener() {
+                            @Override
+                            public void onComplete(String response) {
+                                Message message = new Message();
+                                message.what = FOLLOW;
+                                handler.sendMessage(message);
+                            }
 
-        UsersAPI usersAPI = new UsersAPI(BaseActivity.token);
-        usersAPI.show(uid, new RequestListener() {
+                            @Override
+                            public void onIOException(IOException e) {
+
+                            }
+
+                            @Override
+                            public void onError(WeiboException e) {
+
+                            }
+                        });
+                    } else {
+                        friendshipsAPI.destroy(user.getId(), user.getScreenName(), new RequestListener() {
+                            @Override
+                            public void onComplete(String response) {
+                                Message message = new Message();
+                                message.what = UNFOLLOW;
+                                handler.sendMessage(message);
+                            }
+
+                            @Override
+                            public void onIOException(IOException e) {
+
+                            }
+
+                            @Override
+                            public void onError(WeiboException e) {
+
+                            }
+                        });
+                    }
+            }
+        });
+
+        refreshData(uid);
+    }
+
+    private void refreshData(long uid) {
+        new UsersAPI(BaseActivity.token).show(uid, new RequestListener() {
             @Override
             public void onComplete(String response) {
                 try {
 
                     User user = JSONParser.parseUser(new JSONObject(response));
                     Message message = new Message();
+                    message.what = LOAD_DATA;
                     message.obj = user;
                     handler.sendMessage(message);
                 } catch (JSONException e) {
@@ -104,6 +174,8 @@ public class AccountActivity extends SherlockActivity {
     }
 
     public void setData(User user) {
+        this.user = user;
+        getSupportActionBar().setTitle(user.getScreenName());
         profileImg.setImageUrl(user.getProfileImageUrl());
         screenName.setText(user.getScreenName());
         descreption.setText(user.getDescription());
@@ -111,6 +183,13 @@ public class AccountActivity extends SherlockActivity {
         weiboButton.setText("微博\n" + user.getStatusesCount());
         followButton.setText("关注\n" + user.getFriendsCount());
         fansButton.setText("粉丝\n" + user.getFollowersCount());
+        if (user.isFollowing()) {
+            flwBtn.setText("取消关注");
+            flwBtn.setTag(false);
+        } else {
+            flwBtn.setText("关注");
+            flwBtn.setTag(true);
+        }
     }
 
 
