@@ -75,16 +75,21 @@ public class AccountActivity extends SherlockActivity {
                         setData((User) message.obj);
                         break;
                     case FOLLOW:
+                        Toast.makeText(getApplicationContext(), "关注成功", Toast.LENGTH_SHORT).show();
                         refreshData(user.getId());
                         break;
                     case UNFOLLOW:
+                        Toast.makeText(getApplicationContext(), "取消关注成功", Toast.LENGTH_SHORT).show();
                         refreshData(user.getId());
                         break;
                 }
                 return true;
             }
         });
-        if (uid == BaseActivity.uid) flwBtn.setVisibility(View.GONE);
+        if (uid == BaseActivity.uid) {
+            flwBtn.setVisibility(View.GONE);
+        }
+        msgBtn.setVisibility(View.GONE);
 
         final FriendshipsAPI friendshipsAPI = new FriendshipsAPI(BaseActivity.token);
         flwBtn.setOnClickListener(new View.OnClickListener() {
