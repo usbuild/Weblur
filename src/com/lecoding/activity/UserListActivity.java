@@ -1,6 +1,5 @@
 package com.lecoding.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +37,9 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
     Handler handler;
     GestureDetector gestureDetector;
     UserListInfo listInfo;
+    FriendshipsAPI friendshipsAPI;
+    long uid;
+    final int pageSize = 50;
 
     private final class UserListInfo {
         public List<User> users;
@@ -85,29 +87,13 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
         });
 
         Intent intent = getIntent();
-        final long uid = intent.getLongExtra("uid", 0);
-        FriendshipsAPI friendshipsAPI = new FriendshipsAPI(BaseActivity.token);
-        final int pageSize = 50;
+        uid = intent.getLongExtra("uid", 0);
+        friendshipsAPI = new FriendshipsAPI(BaseActivity.token);
+
         friendshipsAPI.followers(uid, pageSize, 0, true, new RequestListener() {
             @Override
             public void onComplete(String response) {
-
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    listInfo.nextCursor = jsonObject.getInt("next_cursor");
-                    listInfo.prevCursor = jsonObject.getInt("previous_cursor");
-                    listInfo.total = jsonObject.getInt("total_number");
-                    JSONArray jsonArray = jsonObject.getJSONArray("users");
-                    listInfo.users.clear();
-                    for (int i = 0; i < jsonArray.length(); ++i) {
-                        listInfo.users.add(JSONParser.parseUser(jsonArray.getJSONObject(i)));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                Message message = new Message();
-                handler.sendMessage(message);
+                updateResult(response);
             }
 
             @Override
@@ -124,11 +110,63 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
         gestureDetector = new GestureDetector(this);
     }
 
-    public void loadPrev() {
+    public void updateResult(String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            listInfo.nextCursor = jsonObject.getInt("next_cursor");
+            listInfo.prevCursor = jsonObject.getInt("previous_cursor");
+            listInfo.total = jsonObject.getInt("total_number");
+            JSONArray jsonArray = jsonObject.getJSONArray("users");
+            listInfo.users.clear();
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                listInfo.users.add(JSONParser.parseUser(jsonArray.getJSONObject(i)));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+        Message message = new Message();
+        handler.sendMessage(message);
+    }
+
+    public void loadPrev() {
+        if (listInfo.prevCursor == 0) Toast.makeText(getApplicationContext(), "已是第一页", Toast.LENGTH_SHORT).show();
+        friendshipsAPI.followers(uid, pageSize, listInfo.prevCursor, true, new RequestListener() {
+            @Override
+            public void onComplete(String response) {
+                updateResult(response);
+            }
+
+            @Override
+            public void onIOException(IOException e) {
+
+            }
+
+            @Override
+            public void onError(WeiboException e) {
+
+            }
+        });
     }
 
     public void loadNext() {
+        if (listInfo.nextCursor == 0) Toast.makeText(getApplicationContext(), "已是最后一页", Toast.LENGTH_SHORT).show();
+        friendshipsAPI.followers(uid, pageSize, listInfo.nextCursor, true, new RequestListener() {
+            @Override
+            public void onComplete(String response) {
+                updateResult(response);
+            }
+
+            @Override
+            public void onIOException(IOException e) {
+
+            }
+
+            @Override
+            public void onError(WeiboException e) {
+
+            }
+        });
 
     }
 
@@ -177,10 +215,10 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                            float velocityY) {
         if (e1.getX() - e2.getX() > 50) {
-            loadPrev();
+            loadNext();
             return true;
         } else if (e1.getX() - e2.getX() < -50) {
-            loadNext();
+            loadPrev();
             return true;
         }
         return false;
