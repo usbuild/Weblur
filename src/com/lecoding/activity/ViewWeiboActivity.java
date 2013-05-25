@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -83,7 +84,6 @@ public class ViewWeiboActivity extends SherlockActivity {
 
         weiboText = (TextView) findViewById(R.id.weibo_item_text);
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
-
 
 
         thumbnail = (SmartImageView) findViewById(R.id.thumbnail);
@@ -213,7 +213,15 @@ public class ViewWeiboActivity extends SherlockActivity {
 
             }
         });
-
+        commentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Comment comment = (Comment) commentList.getAdapter().getItem(i);
+                Intent intent = new Intent(ViewWeiboActivity.this, AccountActivity.class);
+                intent.putExtra("uid", comment.getUser().getId());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
