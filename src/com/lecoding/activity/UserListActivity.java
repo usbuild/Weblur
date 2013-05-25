@@ -40,6 +40,10 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
     FriendshipsAPI friendshipsAPI;
     long uid;
     final int pageSize = 50;
+    public static final int FOLLOWER = 0;
+    public static final int FRIEND = 1;
+    public static final int BIFOLLOW = 2;
+    public int type;
 
     private final class UserListInfo {
         public List<User> users;
@@ -49,10 +53,25 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
     }
 
     public void updateList() {
-//        users = listInfo.users;
         userAdapter.notifyDataSetChanged();
-//        listView.setAdapter(new UserAdapter(this, listInfo.users));
     }
+
+    private RequestListener listener = new RequestListener() {
+        @Override
+        public void onComplete(String response) {
+            updateResult(response);
+        }
+
+        @Override
+        public void onIOException(IOException e) {
+
+        }
+
+        @Override
+        public void onError(WeiboException e) {
+
+        }
+    };
 
     @SuppressWarnings("deprecated")
     public void onCreate(Bundle savedInstanceState) {
@@ -88,24 +107,9 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
 
         Intent intent = getIntent();
         uid = intent.getLongExtra("uid", 0);
+        type = intent.getIntExtra("type", FOLLOWER);
         friendshipsAPI = new FriendshipsAPI(BaseActivity.token);
-
-        friendshipsAPI.followers(uid, pageSize, 0, true, new RequestListener() {
-            @Override
-            public void onComplete(String response) {
-                updateResult(response);
-            }
-
-            @Override
-            public void onIOException(IOException e) {
-
-            }
-
-            @Override
-            public void onError(WeiboException e) {
-
-            }
-        });
+        friendsOrFollower(0);
         listView.setOnTouchListener(this);
         gestureDetector = new GestureDetector(this);
     }
@@ -131,42 +135,27 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
 
     public void loadPrev() {
         if (listInfo.prevCursor == 0) Toast.makeText(getApplicationContext(), "已是第一页", Toast.LENGTH_SHORT).show();
-        friendshipsAPI.followers(uid, pageSize, listInfo.prevCursor, true, new RequestListener() {
-            @Override
-            public void onComplete(String response) {
-                updateResult(response);
-            }
-
-            @Override
-            public void onIOException(IOException e) {
-
-            }
-
-            @Override
-            public void onError(WeiboException e) {
-
-            }
-        });
+        friendsOrFollower(listInfo.prevCursor);
     }
 
     public void loadNext() {
         if (listInfo.nextCursor == 0) Toast.makeText(getApplicationContext(), "已是最后一页", Toast.LENGTH_SHORT).show();
-        friendshipsAPI.followers(uid, pageSize, listInfo.nextCursor, true, new RequestListener() {
-            @Override
-            public void onComplete(String response) {
-                updateResult(response);
-            }
+        friendsOrFollower(listInfo.nextCursor);
 
-            @Override
-            public void onIOException(IOException e) {
+    }
 
-            }
-
-            @Override
-            public void onError(WeiboException e) {
-
-            }
-        });
+    public void friendsOrFollower(int cursor) {
+        switch (type) {
+            case FOLLOWER:
+                friendshipsAPI.followers(uid, pageSize, cursor, true, listener);
+                break;
+            case FRIEND:
+                friendshipsAPI.friends(uid, pageSize, cursor, true, listener);
+                break;
+            case BIFOLLOW:
+                friendshipsAPI.bilateral(uid, pageSize, cursor, listener);
+                break;
+        }
 
     }
 

@@ -96,9 +96,21 @@ public class AccountActivity extends SherlockActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(AccountActivity.this, UserListActivity.class);
                 intent.putExtra("uid", user.getId());
+                intent.putExtra("type", UserListActivity.FOLLOWER);
                 startActivity(intent);
             }
         });
+
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AccountActivity.this, UserListActivity.class);
+                intent.putExtra("uid", user.getId());
+                intent.putExtra("type", UserListActivity.FRIEND);
+                startActivity(intent);
+            }
+        });
+
 
         final FriendshipsAPI friendshipsAPI = new FriendshipsAPI(BaseActivity.token);
         flwBtn.setOnClickListener(new View.OnClickListener() {
