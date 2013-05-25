@@ -9,4 +9,8 @@
             android:title="@string/pref_image_show"
             android:defaultValue="true"
             />
+    <Preference
+            android:key="pref_key_setting_about"
+            android:title="@string/about"
+            />
 </PreferenceScreen>

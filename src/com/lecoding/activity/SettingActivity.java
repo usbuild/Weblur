@@ -20,6 +20,7 @@ public class SettingActivity extends SherlockPreferenceActivity {
     CheckBoxPreference checkBoxPreference;
     Preference preference;
     SharedPreferences preferences;
+    Preference about;
 
     @SuppressWarnings("deprecated")
 
@@ -34,6 +35,15 @@ public class SettingActivity extends SherlockPreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(SettingActivity.this, AccountActivity.class);
                 intent.putExtra("uid", BaseActivity.uid);
+                startActivity(intent);
+                return true;
+            }
+        });
+        about = findPreference("pref_key_setting_about");
+        about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(SettingActivity.this, AboutActivity.class);
                 startActivity(intent);
                 return true;
             }

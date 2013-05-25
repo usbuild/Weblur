@@ -91,6 +91,15 @@ public class AccountActivity extends SherlockActivity {
         }
         msgBtn.setVisibility(View.GONE);
 
+        fansButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AccountActivity.this, UserListActivity.class);
+                intent.putExtra("uid", user.getId());
+                startActivity(intent);
+            }
+        });
+
         final FriendshipsAPI friendshipsAPI = new FriendshipsAPI(BaseActivity.token);
         flwBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +197,8 @@ public class AccountActivity extends SherlockActivity {
         weiboButton.setText("微博\n" + user.getStatusesCount());
         followButton.setText("关注\n" + user.getFriendsCount());
         fansButton.setText("粉丝\n" + user.getFollowersCount());
+
+
         if (user.isFollowing()) {
             flwBtn.setText("取消关注");
             flwBtn.setTag(false);

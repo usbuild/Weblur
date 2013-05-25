@@ -50,14 +50,13 @@ public class UserAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.userlist_item, null);
 
             holder.profileImage = (SmartImageView) view.findViewById(R.id.profile_img);
-            holder.gender = (TextView) view.findViewById(R.id.screen_name);
-            holder.location = (TextView) view.findViewById(R.id.gender);
+            holder.screenName = (TextView) view.findViewById(R.id.screen_name);
+            holder.gender = (TextView) view.findViewById(R.id.gender);
+            holder.location = (TextView) view.findViewById(R.id.location);
             holder.weiboCnt = (TextView) view.findViewById(R.id.weibo_cnt);
             holder.followCnt = (TextView) view.findViewById(R.id.follow_cnt);
             holder.fansCnt = (TextView) view.findViewById(R.id.fans_cnt);
             holder.description = (TextView) view.findViewById(R.id.description);
-
-
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -65,12 +64,18 @@ public class UserAdapter extends BaseAdapter {
         final User user = this.users.get(i);
         holder.profileImage.setImageUrl(user.getProfileImageUrl());
         holder.screenName.setText(user.getScreenName());
-        holder.gender.setText(user.getGender());
+        if (user.getGender().equals("m")) {
+            holder.gender.setText("男");
+        } else if (user.getGender().equals("f")) {
+            holder.gender.setText("女");
+        } else {
+            holder.gender.setText("未知");
+        }
         holder.location.setText(user.getLocation());
         holder.weiboCnt.setText(user.getStatusesCount() + "微博");
         holder.followCnt.setText(user.getFriendsCount() + "关注");
         holder.fansCnt.setText(user.getFollowersCount() + "粉丝");
-        holder.description.setText(user.getDescription());
+        holder.description.setText("");
         return view;
     }
 

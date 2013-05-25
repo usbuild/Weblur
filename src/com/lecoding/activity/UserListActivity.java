@@ -5,7 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.lecoding.data.User;
 import com.lecoding.util.JSONParser;
@@ -24,11 +32,12 @@ import java.util.List;
 /**
  * Created by usbuild on 13-5-24.
  */
-public class UserListActivity extends Activity {
+public class UserListActivity extends SherlockActivity implements GestureDetector.OnGestureListener, View.OnTouchListener {
     ListView listView;
     UserAdapter userAdapter;
-    List<User> users;
     Handler handler;
+    GestureDetector gestureDetector;
+    UserListInfo listInfo;
 
     private final class UserListInfo {
         public List<User> users;
@@ -37,23 +46,41 @@ public class UserListActivity extends Activity {
         public int total;
     }
 
-    public void updateList(UserListInfo listInfo) {
-
+    public void updateList() {
+//        users = listInfo.users;
+        userAdapter.notifyDataSetChanged();
+//        listView.setAdapter(new UserAdapter(this, listInfo.users));
     }
 
+    @SuppressWarnings("deprecated")
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_list);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         listView = (ListView) findViewById(R.id.user_list);
-        users = new ArrayList<User>();
-        userAdapter = new UserAdapter(this, users);
+        listInfo = new UserListInfo();
+        listInfo.users = new ArrayList<User>();
+
+        userAdapter = new UserAdapter(this, listInfo.users);
         listView.setAdapter(userAdapter);
 
         handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                updateList((UserListInfo) message.obj);
+                updateList();
                 return true;
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(UserListActivity.this, AccountActivity.class);
+                intent.putExtra("uid", listInfo.users.get(i).getId());
+                startActivity(intent);
             }
         });
 
@@ -64,7 +91,6 @@ public class UserListActivity extends Activity {
         friendshipsAPI.followers(uid, pageSize, 0, true, new RequestListener() {
             @Override
             public void onComplete(String response) {
-                UserListInfo listInfo = new UserListInfo();
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
@@ -72,7 +98,7 @@ public class UserListActivity extends Activity {
                     listInfo.prevCursor = jsonObject.getInt("previous_cursor");
                     listInfo.total = jsonObject.getInt("total_number");
                     JSONArray jsonArray = jsonObject.getJSONArray("users");
-                    listInfo.users = new ArrayList<User>(jsonArray.length());
+                    listInfo.users.clear();
                     for (int i = 0; i < jsonArray.length(); ++i) {
                         listInfo.users.add(JSONParser.parseUser(jsonArray.getJSONObject(i)));
                     }
@@ -81,7 +107,6 @@ public class UserListActivity extends Activity {
                 }
 
                 Message message = new Message();
-                message.obj = listInfo;
                 handler.sendMessage(message);
             }
 
@@ -95,6 +120,69 @@ public class UserListActivity extends Activity {
 
             }
         });
+        listView.setOnTouchListener(this);
+        gestureDetector = new GestureDetector(this);
+    }
 
+    public void loadPrev() {
+
+    }
+
+    public void loadNext() {
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        return gestureDetector.onTouchEvent(motionEvent);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                           float velocityY) {
+        if (e1.getX() - e2.getX() > 50) {
+            loadPrev();
+            return true;
+        } else if (e1.getX() - e2.getX() < -50) {
+            loadNext();
+            return true;
+        }
+        return false;
     }
 }
