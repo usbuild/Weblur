@@ -39,6 +39,7 @@
         <activity android:name=".activity.AccountActivity"/>
         <activity android:name=".activity.UserListActivity"/>
         <activity android:name=".activity.AboutActivity"/>
+        <activity android:name=".activity.WeiboListActivity"/>
     </application>
 
 </manifest>

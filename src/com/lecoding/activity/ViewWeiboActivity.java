@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.lecoding.data.Comment;
@@ -224,5 +225,11 @@ public class ViewWeiboActivity extends SherlockActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.weibo, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

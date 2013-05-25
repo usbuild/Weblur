@@ -6,11 +6,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.lecoding.data.User;
@@ -90,6 +92,15 @@ public class AccountActivity extends SherlockActivity {
             flwBtn.setVisibility(View.GONE);
         }
         msgBtn.setVisibility(View.GONE);
+
+        weiboButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AccountActivity.this, WeiboListActivity.class);
+                intent.putExtra("uid", user.getId());
+                startActivity(intent);
+            }
+        });
 
         fansButton.setOnClickListener(new View.OnClickListener() {
             @Override
