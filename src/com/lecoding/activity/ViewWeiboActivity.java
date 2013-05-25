@@ -296,14 +296,28 @@ public class ViewWeiboActivity extends SherlockActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(ViewWeiboActivity.this, PostActivity.class);
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
+                return true;
+
+            case R.id.menu_comment:
+                startActivity(intent);
+                return true;
+
+            case R.id.menu_forward:
+                startActivity(intent);
+                return true;
+            
+            case R.id.menu_favorite:
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
