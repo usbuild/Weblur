@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -20,11 +19,13 @@ import com.lecoding.data.PicDetail;
 import com.lecoding.data.Status;
 import com.lecoding.util.CommentAdapter;
 import com.lecoding.util.JSONParser;
+import com.lecoding.util.RepostAdapter;
 import com.lecoding.view.PicList;
 import com.lecoding.view.Retweet;
 import com.loopj.android.image.SmartImageView;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.CommentsAPI;
+import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.api.WeiboAPI;
 import com.weibo.sdk.android.net.RequestListener;
 import org.json.JSONArray;
@@ -43,6 +44,7 @@ import java.util.List;
  */
 public class ViewWeiboActivity extends SherlockActivity {
     private final int UPDATE_CMT = 0;
+    private final int UPDATE_REPO = 1;
 
     private TextView weiboText;
     private SmartImageView profileImg;
@@ -54,14 +56,29 @@ public class ViewWeiboActivity extends SherlockActivity {
     private TextView attitudeCount;
     private ListView commentList;
     private CommentAdapter commentAdapter;
+    private RepostAdapter repostAdapter;
     private List<Comment> comments;
+    private List<Status> reposts;
+    private Status status;
+    public final static int COMMENT = 0;
+    public final static int REPOST = 1;
+    private int type = COMMENT;
 
     private Handler handler;
 
 
     public void updateCommentList(List<Comment> comments) {
-        this.comments.addAll(comments);
-        commentAdapter.notifyDataSetChanged();
+        commentList.setAdapter(new CommentAdapter(this, comments));
+        commentCount.setTextColor(getResources().getColor(R.color.lightblue));
+        repostCount.setTextColor(getResources().getColor(android.R.color.black));
+        type = COMMENT;
+    }
+
+    public void updateRepostList(List<Status> statuses) {
+        commentList.setAdapter(new RepostAdapter(this, statuses));
+        repostCount.setTextColor(getResources().getColor(R.color.lightblue));
+        commentCount.setTextColor(getResources().getColor(android.R.color.black));
+        type = REPOST;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -77,10 +94,13 @@ public class ViewWeiboActivity extends SherlockActivity {
 
         setContentView(commentList);
 
+        repostAdapter = new RepostAdapter(this, reposts);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         comments = new ArrayList<Comment>();
+        reposts = new ArrayList<Status>();
 
         weiboText = (TextView) findViewById(R.id.weibo_item_text);
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
@@ -95,7 +115,7 @@ public class ViewWeiboActivity extends SherlockActivity {
         repostCount = (TextView) findViewById(R.id.weibo_item_repost_cnt);
 
 
-        final Status status = (Status) getIntent().getSerializableExtra("status");
+        status = (Status) getIntent().getSerializableExtra("status");
 
         attitudeCount.setText("赞(" + status.getAttitudesCount() + ")");
         commentCount.setText("评论(" + status.getCommentsCount() + ")");
@@ -137,6 +157,10 @@ public class ViewWeiboActivity extends SherlockActivity {
                     case UPDATE_CMT:
                         updateCommentList((List<Comment>) message.obj);
                         break;
+                    case UPDATE_REPO:
+                        updateRepostList((List<Status>) message.obj);
+                        break;
+
                 }
                 return false;
             }
@@ -154,23 +178,20 @@ public class ViewWeiboActivity extends SherlockActivity {
         repostCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ViewWeiboActivity.this, "repost", Toast.LENGTH_LONG).show();
-
+                loadReposts();
             }
         });
 
         commentCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ViewWeiboActivity.this, "Comment", Toast.LENGTH_LONG).show();
-
+                loadComments();
             }
         });
 
         attitudeCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ViewWeiboActivity.this, "attitude", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -178,6 +199,64 @@ public class ViewWeiboActivity extends SherlockActivity {
         commentAdapter = new CommentAdapter(this, comments);
         commentList.setAdapter(commentAdapter);
 
+        loadComments();
+
+        commentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (type == COMMENT) {
+
+                    Comment comment = (Comment) commentList.getAdapter().getItem(i);
+                    Intent intent = new Intent(ViewWeiboActivity.this, AccountActivity.class);
+                    intent.putExtra("uid", comment.getUser().getId());
+                    startActivity(intent);
+                } else {
+                    Status status = (Status) commentList.getAdapter().getItem(i);
+                    Intent intent = new Intent(ViewWeiboActivity.this, ViewWeiboActivity.class);
+                    intent.putExtra("status", status);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
+    public void loadReposts() {
+        StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
+        statusesAPI.repostTimeline(status.getId(), 0, 0, 20, 1, WeiboAPI.AUTHOR_FILTER.ALL, new RequestListener() {
+            @Override
+            public void onComplete(String response) {
+                JSONTokener tokener = new JSONTokener(response);
+                try {
+                    JSONArray jsonArray = ((JSONObject) tokener.nextValue()).getJSONArray("reposts");
+                    List<Status> statuses = new ArrayList<Status>();
+                    for (int i = 0; i < jsonArray.length(); ++i) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        statuses.add(JSONParser.parseStatus(jsonObject));
+                    }
+
+                    Message message = new Message();
+                    message.obj = statuses;
+                    message.what = UPDATE_REPO;
+                    handler.sendMessage(message);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onIOException(IOException e) {
+
+            }
+
+            @Override
+            public void onError(WeiboException e) {
+
+            }
+        });
+    }
+
+    public void loadComments() {
         CommentsAPI commentsAPI = new CommentsAPI(BaseActivity.token);
         commentsAPI.show(status.getId(), 0, 0, 20, 1,
                 WeiboAPI.AUTHOR_FILTER.ALL
@@ -211,15 +290,6 @@ public class ViewWeiboActivity extends SherlockActivity {
             @Override
             public void onError(WeiboException e) {
 
-            }
-        });
-        commentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Comment comment = (Comment) commentList.getAdapter().getItem(i);
-                Intent intent = new Intent(ViewWeiboActivity.this, AccountActivity.class);
-                intent.putExtra("uid", comment.getUser().getId());
-                startActivity(intent);
             }
         });
     }
