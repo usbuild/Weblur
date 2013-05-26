@@ -203,10 +203,10 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                            float velocityY) {
-        if (e1.getX() - e2.getX() > 50) {
+        if (e1.getX() - e2.getX() > 200) {
             loadNext();
             return true;
-        } else if (e1.getX() - e2.getX() < -50) {
+        } else if (e1.getX() - e2.getX() < -200) {
             loadPrev();
             return true;
         }

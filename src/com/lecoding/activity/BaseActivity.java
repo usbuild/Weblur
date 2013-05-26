@@ -1,10 +1,14 @@
 package com.lecoding.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
@@ -27,8 +31,10 @@ import java.io.IOException;
  * DateTime: 13-4-17 下午4:51
  */
 public class BaseActivity extends SherlockFragmentActivity {
+    // for test, not use
     private static final String ACCESS_TOKEN = "2.008NuYtBnYdDWDd4866062744RXaVC";
     private static final String EXPIRES_IN = "157516713";
+
     public static Oauth2AccessToken token = null;
     private static final String APP_KEY = "3222108305";
     private static final String REDIRECT_URI = "http://usbuild.duapp.com/weiblur.php";
@@ -88,21 +94,57 @@ public class BaseActivity extends SherlockFragmentActivity {
                         timelineFragment.loadData();
                         break;
                     case WB_EXCPETION:
-                        Toast.makeText(BaseActivity.this, (String) message.obj, Toast.LENGTH_LONG);
+                        Toast.makeText(BaseActivity.this, "授权出错", Toast.LENGTH_LONG);
+                        finish();
                         break;
                     case WB_ERROR:
-                        Toast.makeText(BaseActivity.this, (String) message.obj, Toast.LENGTH_LONG);
+                        showSettingsAlert();
                         break;
                     case WB_CANCEL:
-                        Toast.makeText(BaseActivity.this, (String) message.obj, Toast.LENGTH_LONG);
+                        finish();
                         break;
                 }
                 return false;
             }
         });
 
+        weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
+        getToken();
+    }
+
+
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("设置网络");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("网络尚未打开，您希望设置么？");
+
+        alertDialog.setPositiveButton("设置", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                startActivityForResult(intent, 0);
+            }
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                finish();
+            }
+        });
+
+        alertDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void getToken() {
+        Toast.makeText(this, "获取 Token", Toast.LENGTH_LONG).show();
         if (token == null) {
-            weibo = Weibo.getInstance(APP_KEY, REDIRECT_URI);
             weibo.authorize(this, new WeiboAuthListener() {
                 @Override
                 public void onComplete(Bundle bundle) {
@@ -125,7 +167,7 @@ public class BaseActivity extends SherlockFragmentActivity {
                 @Override
                 public void onError(WeiboDialogError weiboDialogError) {
                     Message message = new Message();
-                    message.what = WB_EXCPETION;
+                    message.what = WB_ERROR;
                     message.obj = weiboDialogError.getMessage();
                     handler.sendMessage(message);
                 }
@@ -133,14 +175,12 @@ public class BaseActivity extends SherlockFragmentActivity {
                 @Override
                 public void onCancel() {
                     Message message = new Message();
-                    message.what = WB_EXCPETION;
+                    message.what = WB_CANCEL;
                     message.obj = "Auth Canceled";
                     handler.sendMessage(message);
                 }
             });
         }
-
-
     }
 
     @Override

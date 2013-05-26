@@ -27,7 +27,9 @@
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
+                <action android:name="android.net."/>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -40,7 +42,12 @@
         <activity android:name=".activity.UserListActivity"/>
         <activity android:name=".activity.AboutActivity"/>
         <activity android:name=".activity.WeiboListActivity"/>
-        <activity android:name=".activity.PostCommentActivity"/>
+
+        <receiver android:name=".util.ConnectionChangeReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
