@@ -1,8 +1,11 @@
 package com.lecoding.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -101,6 +104,7 @@ public class BaseActivity extends SherlockFragmentActivity {
                         showSettingsAlert();
                         break;
                     case WB_CANCEL:
+                        Toast.makeText(BaseActivity.this, "授权已取消", Toast.LENGTH_LONG);
                         finish();
                         break;
                 }
@@ -137,13 +141,32 @@ public class BaseActivity extends SherlockFragmentActivity {
         alertDialog.show();
     }
 
+    public boolean isNetworkAvailable() {
+        Context context = getApplicationContext();
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] info = connectivity.getAllNetworkInfo();
+        if (info != null) {//逐一查找状态为已连接的网络
+            for (int i = 0; i < info.length; i++) {
+                if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void getToken() {
-        Toast.makeText(this, "获取 Token", Toast.LENGTH_LONG).show();
+        if (!isNetworkAvailable()) {
+            showSettingsAlert();
+            return;
+        }
         if (token == null) {
             weibo.authorize(this, new WeiboAuthListener() {
                 @Override
