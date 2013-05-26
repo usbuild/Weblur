@@ -17,8 +17,8 @@ import com.lecoding.R;
  */
 public class SettingActivity extends SherlockPreferenceActivity {
 
-    CheckBoxPreference checkBoxPreference;
-    Preference preference;
+    CheckBoxPreference showImagePref;
+    Preference accountPref;
     SharedPreferences preferences;
     Preference about;
 
@@ -29,8 +29,9 @@ public class SettingActivity extends SherlockPreferenceActivity {
         addPreferencesFromResource(R.xml.pref);
         preferences = getSharedPreferences("setting", MODE_PRIVATE);
 
-        preference = findPreference("pref_key_setting_account");
-        preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+        accountPref = findPreference("pref_key_setting_account");
+        accountPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(SettingActivity.this, AccountActivity.class);
@@ -39,6 +40,8 @@ public class SettingActivity extends SherlockPreferenceActivity {
                 return true;
             }
         });
+
+
         about = findPreference("pref_key_setting_about");
         about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -49,16 +52,20 @@ public class SettingActivity extends SherlockPreferenceActivity {
             }
         });
 
-        checkBoxPreference = (CheckBoxPreference) findPreference("pref_key_show_img");
-        checkBoxPreference.setChecked(preferences.getBoolean("show_img", true));
 
-        checkBoxPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        /*
+        showImagePref = (CheckBoxPreference) findPreference("pref_key_show_img");
+        showImagePref.setChecked(preferences.getBoolean("show_img", true));
+
+        showImagePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                preferences.edit().putBoolean("show_img", checkBoxPreference.isChecked()).commit();
+                preferences.edit().putBoolean("show_img", showImagePref.isChecked()).commit();
                 return true;
             }
         });
+        */
+
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

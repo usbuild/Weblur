@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_10"
                 android:id="@+id/weibo_item_user"
-                />
+                android:gravity="center"/>
 
     </LinearLayout>
 

@@ -4,11 +4,13 @@
             android:key="pref_key_setting_account"
             android:title="@string/my_account"
             />
+    <!--
     <CheckBoxPreference
             android:key="pref_key_show_img"
             android:title="@string/pref_image_show"
             android:defaultValue="true"
             />
+            -->
     <Preference
             android:key="pref_key_setting_about"
             android:title="@string/about"

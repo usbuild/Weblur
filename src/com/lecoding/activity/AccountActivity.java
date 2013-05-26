@@ -219,7 +219,10 @@ public class AccountActivity extends SherlockActivity {
         status.setText(user.getStatus() != null ? user.getStatus().getText() : "");
         weiboButton.setText("微博\n" + user.getStatusesCount());
         followButton.setText("关注\n" + user.getFriendsCount());
-        fansButton.setText("粉丝\n" + user.getFollowersCount());
+        if (user.getFollowersCount() > 1000000)
+            fansButton.setText("粉丝\n" + user.getFollowersCount() / 10000 + "万");
+        else
+            fansButton.setText("粉丝\n" + user.getFollowersCount());
 
 
         if (user.isFollowing()) {

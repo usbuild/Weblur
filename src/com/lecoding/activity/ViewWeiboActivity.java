@@ -54,6 +54,7 @@ public class ViewWeiboActivity extends SherlockActivity {
     private TextView weiboText;
     private SmartImageView profileImg;
     private SmartImageView thumbnail;
+    private TextView weiboUser;
     private PicList picList;
     private Retweet retweet;
     private TextView commentCount;
@@ -112,6 +113,7 @@ public class ViewWeiboActivity extends SherlockActivity {
 
         weiboText = (TextView) findViewById(R.id.weibo_item_text);
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
+        weiboUser = (TextView) findViewById(R.id.weibo_item_user);
 
 
         thumbnail = (SmartImageView) findViewById(R.id.thumbnail);
@@ -124,6 +126,8 @@ public class ViewWeiboActivity extends SherlockActivity {
 
 
         status = (Status) getIntent().getSerializableExtra("status");
+
+        weiboUser.setText(status.getUser().getScreenName());
 
         attitudeCount.setText("赞(" + status.getAttitudesCount() + ")");
         commentCount.setText("评论(" + status.getCommentsCount() + ")");
