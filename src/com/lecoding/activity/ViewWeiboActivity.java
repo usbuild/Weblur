@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -25,6 +27,7 @@ import com.lecoding.view.Retweet;
 import com.loopj.android.image.SmartImageView;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.CommentsAPI;
+import com.weibo.sdk.android.api.FavoritesAPI;
 import com.weibo.sdk.android.api.StatusesAPI;
 import com.weibo.sdk.android.api.WeiboAPI;
 import com.weibo.sdk.android.net.RequestListener;
@@ -45,6 +48,8 @@ import java.util.List;
 public class ViewWeiboActivity extends SherlockActivity {
     private final int UPDATE_CMT = 0;
     private final int UPDATE_REPO = 1;
+    public final int LOVE = 2;
+    public final int UNLOVE = 3;
 
     private TextView weiboText;
     private SmartImageView profileImg;
@@ -62,7 +67,10 @@ public class ViewWeiboActivity extends SherlockActivity {
     private Status status;
     public final static int COMMENT = 0;
     public final static int REPOST = 1;
+
     private int type = COMMENT;
+    private MenuItem loveItem;
+
 
     private Handler handler;
 
@@ -129,6 +137,14 @@ public class ViewWeiboActivity extends SherlockActivity {
         if (status.getRetweetedStatus() != null) {
             retweet.setVisibility(View.VISIBLE);
             retweet.setData(status.getRetweetedStatus(), true);
+            retweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(ViewWeiboActivity.this, ViewWeiboActivity.class);
+                    intent.putExtra("status", status.getRetweetedStatus());
+                    startActivity(intent);
+                }
+            });
         } else {
             if (picDetails.size() <= 1) {
                 thumbnail.setImageUrl(status.getBmiddlePic());
@@ -159,6 +175,15 @@ public class ViewWeiboActivity extends SherlockActivity {
                         break;
                     case UPDATE_REPO:
                         updateRepostList((List<Status>) message.obj);
+                        break;
+                    case LOVE:
+                        loveItem.setIcon(R.drawable.rating_favorite_r);
+                        Toast.makeText(ViewWeiboActivity.this, loveItem.getTitle(), Toast.LENGTH_LONG).show();
+                        status.setFavorited(true);
+                        break;
+                    case UNLOVE:
+                        loveItem.setIcon(R.drawable.rating_favorite);
+                        status.setFavorited(false);
                         break;
 
                 }
@@ -303,18 +328,65 @@ public class ViewWeiboActivity extends SherlockActivity {
                 return true;
 
             case R.id.menu_comment:
-                startActivity(intent);
+                intent.putExtra("type", PostActivity.COMMENT);
+                intent.putExtra("status", status);
+                startActivityForResult(intent, 0);
                 return true;
 
             case R.id.menu_forward:
-                startActivity(intent);
+                intent.putExtra("type", PostActivity.FORWARD);
+                intent.putExtra("status", status);
+                startActivityForResult(intent, 1);
                 return true;
-            
+
             case R.id.menu_favorite:
-                startActivity(intent);
+                love();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void love() {
+        FavoritesAPI favoritesAPI = new FavoritesAPI(BaseActivity.token);
+        if (status.isFavorited()) {
+            favoritesAPI.destroy(status.getId(), new RequestListener() {
+                @Override
+                public void onComplete(String response) {
+                    Message message = new Message();
+                    message.what = UNLOVE;
+                    handler.sendMessage(message);
+                }
+
+                @Override
+                public void onIOException(IOException e) {
+                    Log.e("abc", e.toString());
+                }
+
+                @Override
+                public void onError(WeiboException e) {
+                    Log.e("abc", e.toString());
+                }
+            });
+        } else {
+            favoritesAPI.create(status.getId(), new RequestListener() {
+                @Override
+                public void onComplete(String response) {
+                    Message message = new Message();
+                    message.what = LOVE;
+                    handler.sendMessage(message);
+                }
+
+                @Override
+                public void onIOException(IOException e) {
+                    Log.e("abc", e.toString());
+                }
+
+                @Override
+                public void onError(WeiboException e) {
+                    Log.e("abc", e.toString());
+                }
+            });
         }
     }
 
@@ -322,6 +394,16 @@ public class ViewWeiboActivity extends SherlockActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.weibo, menu);
+        loveItem = menu.findItem(R.id.menu_favorite);
+        if (status.isFavorited()) {
+            loveItem.setIcon(R.drawable.rating_favorite_r);
+        }
+        loveItem.setVisible(false);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        loadComments();
     }
 }

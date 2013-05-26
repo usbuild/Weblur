@@ -179,6 +179,7 @@ public class BaseActivity extends SherlockFragmentActivity {
                 return true;
             case R.id.menu_post:
                 Intent intent = new Intent(this, PostActivity.class);
+                intent.putExtra("type", PostActivity.STATUS);
                 startActivity(intent);
                 return true;
             default:

@@ -40,6 +40,7 @@
         <activity android:name=".activity.UserListActivity"/>
         <activity android:name=".activity.AboutActivity"/>
         <activity android:name=".activity.WeiboListActivity"/>
+        <activity android:name=".activity.PostCommentActivity"/>
     </application>
 
 </manifest>

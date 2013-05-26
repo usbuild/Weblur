@@ -30,6 +30,8 @@
     <string name="about">关于</string>
     <string name="menu_comment">回复</string>
     <string name="menu_forward">转发</string>
-    <string name="menu_favorite">赞</string>
+    <string name="menu_favorite">赞</string><string name="post_comment">发表回复</string><string name="同时评论到原微博"/>
+    <string name="comment_origin">评论到原微博</string>
+    <string name="comment_current">评论到当前微博</string>
 
 </resources>
