@@ -99,7 +99,7 @@ public class ViewWeiboActivity extends SherlockActivity {
         commentList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         View view = getLayoutInflater().inflate(R.layout.view_weibo, null);
-        commentList.addHeaderView(view);
+        commentList.addHeaderView(view, null, false);
 
         setContentView(commentList);
 
@@ -233,8 +233,8 @@ public class ViewWeiboActivity extends SherlockActivity {
         commentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (type == COMMENT) {
 
+                if (type == COMMENT) {
                     Comment comment = (Comment) commentList.getAdapter().getItem(i);
                     Intent intent = new Intent(ViewWeiboActivity.this, AccountActivity.class);
                     intent.putExtra("uid", comment.getUser().getId());

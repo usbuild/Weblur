@@ -2,6 +2,7 @@ package com.lecoding.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,10 @@ public class WeiboAdapter extends BaseAdapter {
 
         final Status status = statuses.get(i);
         holder.text.setText(status.getText());
+
+        holder.text.setMovementMethod(LinkMovementMethod.getInstance());
+        holder.text.setFocusable(false);
+
         holder.profileImg.setImageUrl(status.getUser().getProfileImageUrl());
         holder.profileImg.setOnClickListener(new View.OnClickListener() {
             @Override

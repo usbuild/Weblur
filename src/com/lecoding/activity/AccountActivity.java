@@ -69,8 +69,11 @@ public class AccountActivity extends SherlockActivity {
         msgBtn = (Button) findViewById(R.id.pm_btn);
 
         Intent intent = getIntent();
+
         long uid = intent.getLongExtra("uid", 0);
-        if (uid == 0) {
+        String userName = intent.getStringExtra("name");
+
+        if (uid == 0 && userName == null) {
             Toast.makeText(getApplicationContext(), "用户不存在", Toast.LENGTH_LONG).show();
             this.finish();
         }
@@ -85,19 +88,17 @@ public class AccountActivity extends SherlockActivity {
                         break;
                     case FOLLOW:
                         Toast.makeText(getApplicationContext(), "关注成功", Toast.LENGTH_SHORT).show();
-                        refreshData(user.getId());
+                        refreshData(user.getId(), user.getName());
                         break;
                     case UNFOLLOW:
                         Toast.makeText(getApplicationContext(), "取消关注成功", Toast.LENGTH_SHORT).show();
-                        refreshData(user.getId());
+                        refreshData(user.getId(), user.getName());
                         break;
                 }
                 return true;
             }
         });
-        if (uid == BaseActivity.uid) {
-            flwBtn.setVisibility(View.GONE);
-        }
+
         msgBtn.setVisibility(View.GONE);
 
         weiboButton.setOnClickListener(new View.OnClickListener() {
@@ -177,11 +178,11 @@ public class AccountActivity extends SherlockActivity {
             }
         });
 
-        refreshData(uid);
+        refreshData(uid, userName);
     }
 
-    private void refreshData(long uid) {
-        new UsersAPI(BaseActivity.token).show(uid, new RequestListener() {
+    private void refreshData(long uid, String name) {
+        RequestListener requestListener = new RequestListener() {
             @Override
             public void onComplete(String response) {
                 try {
@@ -214,11 +215,16 @@ public class AccountActivity extends SherlockActivity {
                 AccountActivity.this.finish();
                 Looper.loop();
             }
-        });
+        };
+        if (uid == 0) new UsersAPI(BaseActivity.token).show(name, requestListener);
+        else new UsersAPI(BaseActivity.token).show(uid, requestListener);
     }
 
     public void setData(User user) {
         this.user = user;
+        if (user.getId() == BaseActivity.uid) {
+            flwBtn.setVisibility(View.GONE);
+        }
         getSupportActionBar().setTitle(user.getScreenName());
         profileImg.setImageUrl(user.getProfileImageUrl());
         screenName.setText(user.getScreenName());

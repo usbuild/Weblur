@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="faces">
+        <item>鼓掌|face_guzhang</item>
+        <item>呵呵|face_hehe</item>
+        <item>嘻嘻|face_xixi</item>
+        <item>哈哈|face_haha</item>
+        <item>可怜|face_kelian</item>
+        <item>挖鼻屎|face_wabishi</item>
+        <item>吃惊|face_chijing</item>
+        <item>害羞|face_haixiu</item>
+        <item>挤眼|face_jiyan</item>
+        <item>闭嘴|face_bizui</item>
+        <item>鄙视|face_bishi</item>
+        <item>爱你|face_aini</item>
+    </string-array>
+</resources>
