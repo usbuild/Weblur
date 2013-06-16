@@ -34,5 +34,6 @@
     <string name="menu_favorite">赞</string><string name="post_comment">发表回复</string><string name="同时评论到原微博"/>
     <string name="comment_origin">评论到原微博</string>
     <string name="comment_current">评论到当前微博</string><string name="about_string">轻微博 0.0.9\nzqc10@software.nju.edu.cn</string>
+    <string name="logout">注销登录</string>
 
 </resources>

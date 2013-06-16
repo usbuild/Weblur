@@ -12,6 +12,11 @@
             />
             -->
     <Preference
+            android:key="pref_key_setting_logout"
+            android:title="@string/logout"
+            />
+
+    <Preference
             android:key="pref_key_setting_about"
             android:title="@string/about"
             />

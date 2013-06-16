@@ -3,12 +3,22 @@ package com.lecoding.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
+import com.weibo.sdk.android.WeiboException;
+import com.weibo.sdk.android.api.AccountAPI;
+import com.weibo.sdk.android.net.RequestListener;
+
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,6 +31,7 @@ public class SettingActivity extends SherlockPreferenceActivity {
     Preference accountPref;
     SharedPreferences preferences;
     Preference about;
+    Preference logoutPref;
 
     @SuppressWarnings("deprecated")
 
@@ -51,6 +62,24 @@ public class SettingActivity extends SherlockPreferenceActivity {
                 return true;
             }
         });
+
+        logoutPref = findPreference("pref_key_setting_logout");
+        logoutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                CookieSyncManager.createInstance(SettingActivity.this);
+                CookieSyncManager.getInstance().startSync();
+                CookieManager.getInstance().removeAllCookie();
+                BaseActivity.token = null;
+
+                Intent intent = new Intent(SettingActivity.this, BaseActivity.class);
+                intent.putExtra("exit", true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
+            }
+        });
+
 
 
         /*
