@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,6 +113,8 @@ public class ViewWeiboActivity extends SherlockActivity {
         reposts = new ArrayList<Status>();
 
         weiboText = (TextView) findViewById(R.id.weibo_item_text);
+        weiboText.setMovementMethod(LinkMovementMethod.getInstance());
+
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
         weiboUser = (TextView) findViewById(R.id.weibo_item_user);
 
@@ -230,6 +233,7 @@ public class ViewWeiboActivity extends SherlockActivity {
 
         loadComments();
 
+        /*
         commentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -246,6 +250,7 @@ public class ViewWeiboActivity extends SherlockActivity {
                 }
             }
         });
+        */
     }
 
     public void loadReposts() {

@@ -1,5 +1,6 @@
 package com.lecoding.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,7 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
     public static final int FRIEND = 1;
     public static final int BIFOLLOW = 2;
     public int type;
+    ProgressDialog progressDialog;
 
     private final class UserListInfo {
         public List<User> users;
@@ -54,6 +56,7 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
 
     public void updateList() {
         userAdapter.notifyDataSetChanged();
+        progressDialog.dismiss();
     }
 
     private RequestListener listener = new RequestListener() {
@@ -80,6 +83,8 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        progressDialog = ProgressDialog.show(this, null, "加载中");
 
         listView = (ListView) findViewById(R.id.user_list);
         listInfo = new UserListInfo();
@@ -203,6 +208,7 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                            float velocityY) {
+        progressDialog.show();
         if (e1.getX() - e2.getX() > 200) {
             loadNext();
             return true;

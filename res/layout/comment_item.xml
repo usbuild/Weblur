@@ -35,7 +35,7 @@
 
     </LinearLayout>
 
-    <TextView
+    <com.lecoding.view.WeiboText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/cmt_content"

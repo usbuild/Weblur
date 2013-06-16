@@ -1,5 +1,6 @@
 package com.lecoding.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,15 +49,15 @@ public class AccountActivity extends SherlockActivity {
     private static final int UNFOLLOW = 2;
     User user = null;
 
+    ProgressDialog progressDialog;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setProgressBarIndeterminateVisibility(true);
 
         setContentView(R.layout.account);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        progressDialog = ProgressDialog.show(this, null, "加载中");
 
         profileImg = (SmartImageView) findViewById(R.id.profile_img);
         screenName = (TextView) findViewById(R.id.screen_name);
@@ -81,7 +82,7 @@ public class AccountActivity extends SherlockActivity {
         handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                setProgressBarIndeterminateVisibility(true);
+                progressDialog.hide();
                 switch (message.what) {
                     case LOAD_DATA:
                         setData((User) message.obj);
@@ -177,11 +178,16 @@ public class AccountActivity extends SherlockActivity {
                     }
             }
         });
-
         refreshData(uid, userName);
     }
 
     private void refreshData(long uid, String name) {
+
+        weiboButton.setVisibility(View.GONE);
+        flwBtn.setVisibility(View.GONE);
+        fansButton.setVisibility(View.GONE);
+        followButton.setVisibility(View.GONE);
+
         RequestListener requestListener = new RequestListener() {
             @Override
             public void onComplete(String response) {
@@ -222,6 +228,10 @@ public class AccountActivity extends SherlockActivity {
 
     public void setData(User user) {
         this.user = user;
+        weiboButton.setVisibility(View.VISIBLE);
+        fansButton.setVisibility(View.VISIBLE);
+        followButton.setVisibility(View.VISIBLE);
+        flwBtn.setVisibility(View.VISIBLE);
         if (user.getId() == BaseActivity.uid) {
             flwBtn.setVisibility(View.GONE);
         }

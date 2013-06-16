@@ -74,9 +74,6 @@ public class WeiboAdapter extends BaseAdapter {
         final Status status = statuses.get(i);
         holder.text.setText(status.getText());
 
-        holder.text.setMovementMethod(LinkMovementMethod.getInstance());
-        holder.text.setFocusable(false);
-
         holder.profileImg.setImageUrl(status.getUser().getProfileImageUrl());
         holder.profileImg.setOnClickListener(new View.OnClickListener() {
             @Override

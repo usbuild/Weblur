@@ -84,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/weibo_item_attitude_cnt"
-                    android:textSize="@dimen/text_size_7"
+                    android:textSize="@dimen/text_size_12"
                     android:layout_marginRight="10dp"
                     />
 
@@ -93,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/weibo_item_repost_cnt"
-                    android:textSize="@dimen/text_size_7"
+                    android:textSize="@dimen/text_size_12"
                     android:layout_marginRight="10dp"
                     />
 
@@ -101,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/weibo_item_comment_cnt"
-                    android:textSize="@dimen/text_size_7"
+                    android:textSize="@dimen/text_size_12"
                     android:layout_marginRight="10dp"
                     />
         </LinearLayout>

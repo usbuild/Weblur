@@ -1,12 +1,16 @@
 package com.lecoding.util;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.lecoding.R;
+import com.lecoding.activity.AccountActivity;
 import com.lecoding.data.Comment;
 import com.loopj.android.image.SmartImageView;
 
@@ -21,7 +25,6 @@ public class CommentAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
     private List<Comment> comments;
-
 
     public CommentAdapter(Context context, List<Comment> comments) {
         inflater = LayoutInflater.from(context);
@@ -57,10 +60,22 @@ public class CommentAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        Comment comment = comments.get(i);
+        final Comment comment = comments.get(i);
         holder.username.setText(comment.getUser().getName());
         holder.content.setText(comment.getText());
+        holder.content.setMovementMethod(LinkMovementMethod.getInstance());
         holder.profileImage.setImageUrl(comment.getUser().getProfileImageUrl());
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), AccountActivity.class);
+                intent.putExtra("uid", comment.getUser().getId());
+                view.getContext().startActivity(intent);
+            }
+        };
+        holder.profileImage.setOnClickListener(listener);
+        holder.username.setOnClickListener(listener);
         return view;
     }
 
