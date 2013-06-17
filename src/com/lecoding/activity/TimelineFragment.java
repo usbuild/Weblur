@@ -40,7 +40,7 @@ public class TimelineFragment extends Fragment {
     private final long UP_LOAD = 0;
     private final long DOWN_LOAD = 1;
     Handler handler = null;
-    private ListView listView;
+    private PullToRefreshListView listView;
     private long sinceId = 0;
     private long maxId = 0;
     private List<Status> oldStatuses = new ArrayList<Status>();
@@ -61,23 +61,24 @@ public class TimelineFragment extends Fragment {
             Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
 
             adapter.notifyDataSetChanged();
+//                        listView.setAdapter(new WeiboAdapter(getActivity(), oldStatuses));
             if (direction == 0) {
-                listView.setSelection(1 + statuses.size());
+                listView.setSelectionFromTop(1 + statuses.size(), 0);
             } else {
-                listView.setSelection(1 + oldStatuses.size() - statuses.size());
+                listView.setSelectionFromTop(1 + oldStatuses.size() - statuses.size(), 0);
             }
         }
     }
 
     public void loadData() {
-        ((PullToRefreshListView) listView).prepareForRefresh();
+        listView.prepareForRefresh();
         new GetDataTask().execute(sinceId, 0L, UP_LOAD);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ground, container, false);
-        listView = (ListView) view.findViewById(R.id.ground_list);
+        listView = (PullToRefreshListView) view.findViewById(R.id.ground_list);
 
 
         listView.setAdapter(adapter);
@@ -93,13 +94,13 @@ public class TimelineFragment extends Fragment {
         });
 
 
-        ((PullToRefreshListView) listView).setLoadMore(new View.OnClickListener() {
+        listView.setLoadMore(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new GetDataTask().execute(0L, maxId, DOWN_LOAD);
             }
         });
-        ((PullToRefreshListView) listView).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        listView.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new GetDataTask().execute(sinceId, 0L, UP_LOAD);
@@ -166,6 +167,7 @@ public class TimelineFragment extends Fragment {
             @Override
             @SuppressWarnings("unchecked")
             public boolean handleMessage(Message message) {
+                listView.onRefreshComplete();
                 switch (message.what) {
                     case WEIBO_ERROR:
                         Toast.makeText(TimelineFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
@@ -174,7 +176,6 @@ public class TimelineFragment extends Fragment {
                         updateListView((List<Status>) message.obj, message.arg1);
                         break;
                 }
-                ((PullToRefreshListView) listView).onRefreshComplete();
                 return true;
             }
         });

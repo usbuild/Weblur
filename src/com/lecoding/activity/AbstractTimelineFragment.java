@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 import com.lecoding.R;
 import com.lecoding.data.Status;
@@ -19,6 +18,7 @@ import com.lecoding.util.WeiboAdapter;
 import com.lecoding.view.PullToRefreshListView;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.api.StatusesAPI;
+import com.weibo.sdk.android.api.WeiboAPI;
 import com.weibo.sdk.android.net.RequestListener;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,28 +29,59 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroundFragment extends Fragment {
+/**
+ * Created by usbuild on 13-6-17.
+ */
+public class AbstractTimelineFragment extends Fragment {
+
     /**
      * Called when the activity is first created.
      */
     private final int WEIBO_ERROR = 0;
     private final int PUBLIC_LINE = 1;
-    private final int PAGE_SIZE = 30;
+    private final int PAGE_SIZE = 20;
+    private final long UP_LOAD = 0;
+    private final long DOWN_LOAD = 1;
     Handler handler = null;
     private PullToRefreshListView listView;
-    private WeiboAdapter adapter;
+    private long sinceId = 0;
+    private long maxId = 0;
     private List<Status> oldStatuses = new ArrayList<Status>();
+    private WeiboAdapter adapter;
 
-    public void updateListView(List<Status> statuses) {
-        oldStatuses.addAll(0, statuses);
-        adapter.notifyDataSetChanged();
+
+    public void updateListView(List<Status> statuses, int direction) {
+        if (statuses.size() > 0) {
+            if (direction == 0) {
+                if (oldStatuses.size() == 0) maxId = statuses.get(statuses.size() - 1).getId() - 1;
+                this.oldStatuses.addAll(0, statuses);
+                if (statuses.size() > 0)
+                    sinceId = statuses.get(0).getId();
+            } else {
+                this.oldStatuses.addAll(statuses);
+                maxId = statuses.get(statuses.size() - 1).getId() - 1;
+            }
+            Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
+
+            adapter.notifyDataSetChanged();
+//                        listView.setAdapter(new WeiboAdapter(getActivity(), oldStatuses));
+            if (direction == 0) {
+                listView.setSelectionFromTop(1 + statuses.size(), 0);
+            } else {
+                listView.setSelectionFromTop(1 + oldStatuses.size() - statuses.size(), 0);
+            }
+        }
+    }
+
+    public void loadData() {
+        listView.prepareForRefresh();
+        new GetDataTask().execute(sinceId, 0L, UP_LOAD);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ground, container, false);
         listView = (PullToRefreshListView) view.findViewById(R.id.ground_list);
-        listView.getmLoadMore().setVisibility(View.GONE);
 
 
         listView.setAdapter(adapter);
@@ -59,21 +90,23 @@ public class GroundFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 Status status = (Status) listView.getAdapter().getItem(pos);
-                Intent intent = new Intent(GroundFragment.this.getActivity(), ViewWeiboActivity.class);
+                Intent intent = new Intent(getActivity(), ViewWeiboActivity.class);
                 intent.putExtra("status", status);
                 startActivity(intent);
             }
         });
+
+
         listView.setLoadMore(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new GetDataTask().execute();
+                new GetDataTask().execute(0L, maxId, DOWN_LOAD);
             }
         });
         listView.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new GetDataTask().execute();
+                new GetDataTask().execute(sinceId, 0L, UP_LOAD);
             }
         });
         if (BaseActivity.token != null) loadData();
@@ -81,19 +114,14 @@ public class GroundFragment extends Fragment {
         return view;
     }
 
-    public void loadData() {
-        listView.prepareForRefresh();
-        new GetDataTask().execute();
-    }
-
-
     private class GetDataTask extends AsyncTask<Long, Void, String[]> {
 
         @Override
         protected String[] doInBackground(Long... integers) {
 
             StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
-            statusesAPI.publicTimeline(PAGE_SIZE, 1, false, new RequestListener() {
+            final long type = integers[2];
+            statusesAPI.homeTimeline(integers[0], integers[1], PAGE_SIZE, 1, false, WeiboAPI.FEATURE.ALL, false, new RequestListener() {
                 @Override
                 public void onComplete(String s) {
                     JSONTokener tokener = new JSONTokener(s);
@@ -107,6 +135,9 @@ public class GroundFragment extends Fragment {
 
                         Message message = new Message();
                         message.obj = statuses;
+                        if (type == UP_LOAD)
+                            message.arg1 = 0;
+                        else message.arg1 = 1;
                         message.what = PUBLIC_LINE;
                         handler.sendMessage(message);
                     } catch (JSONException e) {
@@ -130,7 +161,6 @@ public class GroundFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,15 +173,16 @@ public class GroundFragment extends Fragment {
                 listView.onRefreshComplete();
                 switch (message.what) {
                     case WEIBO_ERROR:
-                        Toast.makeText(GroundFragment.this.getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "拉取微博信息出错！", Toast.LENGTH_LONG).show();
                         break;
                     case PUBLIC_LINE:
-                        updateListView((List<Status>) message.obj);
+                        updateListView((List<Status>) message.obj, message.arg1);
                         break;
                 }
                 return true;
             }
         });
+
     }
 
 }
