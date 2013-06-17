@@ -37,18 +37,23 @@ public class AbstractTimelineFragment extends Fragment {
     /**
      * Called when the activity is first created.
      */
-    private final int WEIBO_ERROR = 0;
-    private final int PUBLIC_LINE = 1;
-    private final int PAGE_SIZE = 20;
-    private final long UP_LOAD = 0;
-    private final long DOWN_LOAD = 1;
+    protected final int WEIBO_ERROR = 0;
+    protected final int PUBLIC_LINE = 1;
+    protected final int PAGE_SIZE = 20;
+    protected final long UP_LOAD = 0;
+    protected final long DOWN_LOAD = 1;
     Handler handler = null;
-    private PullToRefreshListView listView;
-    private long sinceId = 0;
-    private long maxId = 0;
-    private List<Status> oldStatuses = new ArrayList<Status>();
-    private WeiboAdapter adapter;
+    protected PullToRefreshListView listView;
+    protected long sinceId = 0;
+    protected long maxId = 0;
+    protected List<Status> oldStatuses = new ArrayList<Status>();
+    protected WeiboAdapter adapter;
 
+    private Class<? extends AsyncTask<Long, Void, String[]> > asyncTask;
+
+    public void setAsyncTask(Class<? extends AsyncTask<Long, Void, String[]>> asyncTask) {
+        this.asyncTask = asyncTask;
+    }
 
     public void updateListView(List<Status> statuses, int direction) {
         if (statuses.size() > 0) {
@@ -64,7 +69,6 @@ public class AbstractTimelineFragment extends Fragment {
             Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
 
             adapter.notifyDataSetChanged();
-//                        listView.setAdapter(new WeiboAdapter(getActivity(), oldStatuses));
             if (direction == 0) {
                 listView.setSelectionFromTop(1 + statuses.size(), 0);
             } else {
@@ -75,7 +79,13 @@ public class AbstractTimelineFragment extends Fragment {
 
     public void loadData() {
         listView.prepareForRefresh();
-        new GetDataTask().execute(sinceId, 0L, UP_LOAD);
+        try {
+            asyncTask.newInstance().execute(sinceId, 0L, UP_LOAD);
+        } catch (java.lang.InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -100,65 +110,31 @@ public class AbstractTimelineFragment extends Fragment {
         listView.setLoadMore(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new GetDataTask().execute(0L, maxId, DOWN_LOAD);
+                try {
+                    asyncTask.newInstance().execute(0L, maxId, DOWN_LOAD);
+                } catch (java.lang.InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
         listView.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new GetDataTask().execute(sinceId, 0L, UP_LOAD);
+                try {
+                    asyncTask.newInstance().execute(sinceId, 0L, UP_LOAD);
+                } catch (java.lang.InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         });
         if (BaseActivity.token != null) loadData();
 
         return view;
-    }
-
-    private class GetDataTask extends AsyncTask<Long, Void, String[]> {
-
-        @Override
-        protected String[] doInBackground(Long... integers) {
-
-            StatusesAPI statusesAPI = new StatusesAPI(BaseActivity.token);
-            final long type = integers[2];
-            statusesAPI.homeTimeline(integers[0], integers[1], PAGE_SIZE, 1, false, WeiboAPI.FEATURE.ALL, false, new RequestListener() {
-                @Override
-                public void onComplete(String s) {
-                    JSONTokener tokener = new JSONTokener(s);
-                    try {
-                        JSONArray array = (JSONArray) ((JSONObject) tokener.nextValue()).get("statuses");
-                        List<com.lecoding.data.Status> statuses = new ArrayList<com.lecoding.data.Status>();
-                        for (int i = 0; i < array.length(); ++i) {
-                            JSONObject object = array.getJSONObject(i);
-                            statuses.add(JSONParser.parseStatus(object));
-                        }
-
-                        Message message = new Message();
-                        message.obj = statuses;
-                        if (type == UP_LOAD)
-                            message.arg1 = 0;
-                        else message.arg1 = 1;
-                        message.what = PUBLIC_LINE;
-                        handler.sendMessage(message);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onIOException(IOException e) {
-
-                }
-
-                @Override
-                public void onError(WeiboException e) {
-                    Message message = new Message();
-                    message.what = WEIBO_ERROR;
-                    handler.sendMessage(message);
-                }
-            });
-            return null;
-        }
     }
 
     @Override
