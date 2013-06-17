@@ -58,10 +58,14 @@ public abstract class AbstractTimelineFragment extends Fragment {
             Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
 
             adapter.notifyDataSetChanged();
+            if (oldStatuses.size() - statuses.size() == 0) {
+                listView.setSelection(1);
+                return;
+            }
             if (direction == 0) {
-                listView.setSelectionFromTop(1 + statuses.size(), 0);
+                listView.setSelection(statuses.size());
             } else {
-                listView.setSelectionFromTop(1 + oldStatuses.size() - statuses.size(), 0);
+                listView.setSelection(oldStatuses.size() - statuses.size());
             }
         }
     }

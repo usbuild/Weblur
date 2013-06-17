@@ -32,6 +32,7 @@ public class SettingActivity extends SherlockPreferenceActivity {
     SharedPreferences preferences;
     Preference about;
     Preference logoutPref;
+    Preference blockPref;
 
     @SuppressWarnings("deprecated")
 
@@ -79,7 +80,15 @@ public class SettingActivity extends SherlockPreferenceActivity {
                 return true;
             }
         });
-
+        blockPref = findPreference("pref_key_setting_block");
+        blockPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(SettingActivity.this, BlockActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
 
 
         /*

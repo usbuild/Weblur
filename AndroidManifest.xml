@@ -40,14 +40,23 @@
         <activity android:name=".activity.ViewImageActivity"/>
         <activity android:name=".activity.AccountActivity"/>
         <activity android:name=".activity.UserListActivity"/>
-        <activity android:name=".activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+        <activity
+                android:name=".activity.AboutActivity"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
         <activity android:name=".activity.WeiboListActivity"/>
+        <activity android:name=".activity.BlockActivity"/>
 
-        <receiver android:name=".util.ConnectionChangeReceiver" android:enabled="true">
+        <receiver
+                android:name=".util.ConnectionChangeReceiver"
+                android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
+
+        <provider
+                android:name=".data.KeywordProvider"
+                android:authorities="com.lecoding.data.keywordprovider"/>
     </application>
 
 </manifest>
