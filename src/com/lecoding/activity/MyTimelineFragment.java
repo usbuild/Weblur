@@ -40,7 +40,7 @@ public class MyTimelineFragment extends Fragment {
     private final long UP_LOAD = 0;
     private final long DOWN_LOAD = 1;
     Handler handler = null;
-    private ListView listView;
+    private PullToRefreshListView listView;
     private long sinceId = 0;
     private long maxId = 0;
     private List<Status> oldStatuses = new ArrayList<Status>();
@@ -70,14 +70,14 @@ public class MyTimelineFragment extends Fragment {
     }
 
     public void loadData() {
-        ((PullToRefreshListView) listView).prepareForRefresh();
+        listView.prepareForRefresh();
         new GetDataTask().execute(sinceId, 0L, UP_LOAD);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ground, container, false);
-        listView = (ListView) view.findViewById(R.id.ground_list);
+        listView = (PullToRefreshListView) view.findViewById(R.id.ground_list);
 
 
         listView.setAdapter(adapter);
@@ -93,13 +93,13 @@ public class MyTimelineFragment extends Fragment {
         });
 
 
-        ((PullToRefreshListView) listView).setLoadMore(new View.OnClickListener() {
+        listView.setLoadMore(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new GetDataTask().execute(0L, maxId, DOWN_LOAD);
             }
         });
-        ((PullToRefreshListView) listView).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        listView.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new GetDataTask().execute(sinceId, 0L, UP_LOAD);
@@ -175,7 +175,7 @@ public class MyTimelineFragment extends Fragment {
                         updateListView((List<Status>) message.obj, message.arg1);
                         break;
                 }
-                ((PullToRefreshListView) listView).onRefreshComplete();
+                listView.onRefreshComplete();
                 return true;
             }
         });

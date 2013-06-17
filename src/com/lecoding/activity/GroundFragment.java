@@ -37,7 +37,7 @@ public class GroundFragment extends Fragment {
     private final int PUBLIC_LINE = 1;
     private final int PAGE_SIZE = 30;
     Handler handler = null;
-    private ListView listView;
+    private PullToRefreshListView listView;
     private WeiboAdapter adapter;
     private List<Status> oldStatuses = new ArrayList<Status>();
 
@@ -49,8 +49,8 @@ public class GroundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ground, container, false);
-        listView = (ListView) view.findViewById(R.id.ground_list);
-        ((PullToRefreshListView) listView).getmLoadMore().setVisibility(View.GONE);
+        listView = (PullToRefreshListView) view.findViewById(R.id.ground_list);
+        listView.getmLoadMore().setVisibility(View.GONE);
 
 
         listView.setAdapter(adapter);
@@ -64,13 +64,13 @@ public class GroundFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        ((PullToRefreshListView) listView).setLoadMore(new View.OnClickListener() {
+        listView.setLoadMore(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new GetDataTask().execute();
             }
         });
-        ((PullToRefreshListView) listView).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+        listView.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new GetDataTask().execute();
@@ -82,7 +82,7 @@ public class GroundFragment extends Fragment {
     }
 
     public void loadData() {
-        ((PullToRefreshListView) listView).prepareForRefresh();
+        listView.prepareForRefresh();
         new GetDataTask().execute();
     }
 
@@ -148,7 +148,7 @@ public class GroundFragment extends Fragment {
                         updateListView((List<Status>) message.obj);
                         break;
                 }
-                ((PullToRefreshListView) listView).onRefreshComplete();
+                listView.onRefreshComplete();
                 return true;
             }
         });

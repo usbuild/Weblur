@@ -125,11 +125,13 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
         mLoadMore.setOnClickListener(listener);
     }
 
+    /*
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         setSelection(1);
     }
+    */
 
     @Override
     public void setAdapter(ListAdapter adapter) {

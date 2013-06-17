@@ -62,9 +62,9 @@ public class TimelineFragment extends Fragment {
 
             adapter.notifyDataSetChanged();
             if (direction == 0) {
-                listView.setSelection(1 + statuses.size());
+                listView.setSelectionFromTop(1 + statuses.size(), 0);
             } else {
-                listView.setSelection(1 + oldStatuses.size() - statuses.size());
+                listView.setSelectionFromTop(1 + oldStatuses.size() - statuses.size(), 0);
             }
         }
     }
