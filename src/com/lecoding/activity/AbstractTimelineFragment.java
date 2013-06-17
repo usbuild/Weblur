@@ -16,23 +16,18 @@ import com.lecoding.data.Status;
 import com.lecoding.util.JSONParser;
 import com.lecoding.util.WeiboAdapter;
 import com.lecoding.view.PullToRefreshListView;
-import com.weibo.sdk.android.WeiboException;
-import com.weibo.sdk.android.api.StatusesAPI;
-import com.weibo.sdk.android.api.WeiboAPI;
-import com.weibo.sdk.android.net.RequestListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by usbuild on 13-6-17.
  */
-public class AbstractTimelineFragment extends Fragment {
+public abstract class AbstractTimelineFragment extends Fragment {
 
     /**
      * Called when the activity is first created.
@@ -40,20 +35,14 @@ public class AbstractTimelineFragment extends Fragment {
     protected final int WEIBO_ERROR = 0;
     protected final int PUBLIC_LINE = 1;
     protected final int PAGE_SIZE = 20;
-    protected final long UP_LOAD = 0;
-    protected final long DOWN_LOAD = 1;
+    protected final int UP_LOAD = 0;
+    protected final int DOWN_LOAD = 1;
     Handler handler = null;
     protected PullToRefreshListView listView;
     protected long sinceId = 0;
     protected long maxId = 0;
     protected List<Status> oldStatuses = new ArrayList<Status>();
     protected WeiboAdapter adapter;
-
-    private Class<? extends AsyncTask<Long, Void, String[]> > asyncTask;
-
-    public void setAsyncTask(Class<? extends AsyncTask<Long, Void, String[]>> asyncTask) {
-        this.asyncTask = asyncTask;
-    }
 
     public void updateListView(List<Status> statuses, int direction) {
         if (statuses.size() > 0) {
@@ -79,13 +68,7 @@ public class AbstractTimelineFragment extends Fragment {
 
     public void loadData() {
         listView.prepareForRefresh();
-        try {
-            asyncTask.newInstance().execute(sinceId, 0L, UP_LOAD);
-        } catch (java.lang.InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        loadUp();
     }
 
     @Override
@@ -110,26 +93,17 @@ public class AbstractTimelineFragment extends Fragment {
         listView.setLoadMore(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    asyncTask.newInstance().execute(0L, maxId, DOWN_LOAD);
-                } catch (java.lang.InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                listView.getmLoadMore().setText("正在加载");
+                listView.getmLoadMore().setClickable(false);
+                loadDown();
+
             }
         });
 
         listView.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                try {
-                    asyncTask.newInstance().execute(sinceId, 0L, UP_LOAD);
-                } catch (java.lang.InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                loadUp();
             }
         });
         if (BaseActivity.token != null) loadData();
@@ -161,4 +135,45 @@ public class AbstractTimelineFragment extends Fragment {
 
     }
 
+    private List<Status> parseJSON(String resp) {
+        JSONTokener tokener = new JSONTokener(resp);
+        try {
+            JSONArray array = (JSONArray) ((JSONObject) tokener.nextValue()).get("statuses");
+            List<com.lecoding.data.Status> statuses = new ArrayList<com.lecoding.data.Status>();
+            for (int i = 0; i < array.length(); ++i) {
+                JSONObject object = array.getJSONObject(i);
+                statuses.add(JSONParser.parseStatus(object));
+            }
+            return statuses;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected void setUp(String response) {
+        Message message = new Message();
+        message.what = PUBLIC_LINE;
+        message.arg1 = UP_LOAD;
+        message.obj = parseJSON(response);
+        handler.sendMessage(message);
+    }
+
+    protected void setDown(String response) {
+        Message message = new Message();
+        message.what = PUBLIC_LINE;
+        message.arg1 = DOWN_LOAD;
+        message.obj = parseJSON(response);
+        handler.sendMessage(message);
+    }
+
+    protected void loadError() {
+        Message message = new Message();
+        message.what = WEIBO_ERROR;
+        handler.sendMessage(message);
+    }
+
+    protected abstract void loadUp();
+
+    protected abstract void loadDown();
 }

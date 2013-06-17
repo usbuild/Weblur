@@ -393,6 +393,8 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
             invalidateViews();
             setSelection(1);
         }
+        mLoadMore.setText("加载更多");
+        mLoadMore.setClickable(true);
     }
 
     /**
