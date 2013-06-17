@@ -36,5 +36,8 @@
     <string name="comment_current">评论到当前微博</string><string name="about_string">轻微博 0.0.9\nzqc10@software.nju.edu.cn</string>
     <string name="logout">注销登录</string>
     <string name="block_setting">屏蔽设置</string>
+    <string name="edit">修改</string>
+    <string name="remove">删除</string>
+    <string name="menu_add">添加</string>
 
 </resources>

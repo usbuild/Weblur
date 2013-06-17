@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
+import android.text.TextUtils;
 
 /**
  * Created by usbuild on 13-6-17.
@@ -30,23 +31,23 @@ public class KeywordProvider extends ContentProvider {
         URI_MATCHER.addURI(AUTHORITY, BASE_PATH, ALL_KEYS);
         URI_MATCHER.addURI(AUTHORITY, BASE_PATH + "/#", ONE_KEY);
     }
-
+    public static final String _ID = "_id";
     public static final String NAME = "name";
-    private static SQLiteDatabase database;
-    private static final String TBNAME = "keywords";
+    private KeyDataBaseHelper helper;
 
 
     @Override
     public boolean onCreate() {
-        database = new KeyDataBaseHelper(getContext()).getWritableDatabase();
-        return database != null;
+        helper = new KeyDataBaseHelper(getContext());
+        return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
+        SQLiteDatabase database = helper.getReadableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(TBNAME);
+        queryBuilder.setTables(KeyDataBaseHelper.TBNAME);
         Cursor cursor = queryBuilder.query(database, projection, selection, selectionArgs, null, null, sortOrder);
 
         return cursor;
@@ -59,21 +60,72 @@ public class KeywordProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+        SQLiteDatabase database = helper.getWritableDatabase();
+        long id = 0;
+        switch (URI_MATCHER.match(uri)) {
+            case ALL_KEYS:
+                id = database.insert(KeyDataBaseHelper.TBNAME, null, contentValues);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(CONTENT_URI, null);
+        return Uri.parse(BASE_PATH + "/" + id);
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+        int rowDeleted;
+        switch (URI_MATCHER.match(uri)) {
+            case ALL_KEYS:
+                rowDeleted = database.delete(KeyDataBaseHelper.TBNAME, selection, selectionArgs);
+                break;
+            case ONE_KEY:
+                String id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowDeleted = database.delete(KeyDataBaseHelper.TBNAME, KeyDataBaseHelper._ID + "=" + id, null);
+                } else {
+                    rowDeleted = database.delete(KeyDataBaseHelper.TBNAME, KeyDataBaseHelper._ID + "=" + id
+                            + " and " + selection
+                            , selectionArgs);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(CONTENT_URI, null);
+        return rowDeleted;
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+        int rowUpdated;
+        switch (URI_MATCHER.match(uri)) {
+            case ALL_KEYS:
+                rowUpdated = database.update(KeyDataBaseHelper.TBNAME, contentValues, selection, selectionArgs);
+                break;
+            case ONE_KEY:
+                String id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowUpdated = database.update(KeyDataBaseHelper.TBNAME, contentValues, KeyDataBaseHelper._ID + "=" + id, null);
+                } else {
+                    rowUpdated = database.update(KeyDataBaseHelper.TBNAME, contentValues, KeyDataBaseHelper._ID + "=" + id
+                            + " and " + selection
+                            , selectionArgs);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(CONTENT_URI, null);
+        return rowUpdated;
     }
 
     private static class KeyDataBaseHelper extends SQLiteOpenHelper {
         private final static String DBNAME = "keywords.db";
+        private final static String TBNAME = "keywords";
         private final static String _ID = "_id";
         private static final int DATABASE_VERSION = 2;
 
@@ -84,11 +136,6 @@ public class KeywordProvider extends ContentProvider {
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
             sqLiteDatabase.execSQL("create table if not exists " + TBNAME + "(" + _ID + " integer primary key autoincrement, name text not null);");
-
-            SQLiteStatement statement = sqLiteDatabase.compileStatement("insert into " + TBNAME + "(name) values(\"hello\")");
-            statement.executeInsert();
-            statement.close();
-
         }
 
         @Override

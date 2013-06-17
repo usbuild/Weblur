@@ -1,13 +1,21 @@
 package com.lecoding.activity;
 
+import android.app.AlertDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.CursorAdapter;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.view.ContextMenu;
+import android.view.View;
+import android.widget.*;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.lecoding.data.KeywordProvider;
@@ -18,6 +26,8 @@ import com.lecoding.data.KeywordProvider;
 public class BlockActivity extends SherlockActivity {
 
     private ListView listView;
+    private CursorAdapter adapter;
+    Handler handler;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,10 +37,29 @@ public class BlockActivity extends SherlockActivity {
         actionBar.setTitle("屏蔽设置");
 
         listView = (ListView) findViewById(R.id.listView);
-        Cursor cursor = managedQuery(KeywordProvider.CONTENT_URI, null, null, null, null);
-        CursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursor,
-                new String[]{KeywordProvider.NAME}, new int[]{android.R.id.text1});
+        registerForContextMenu(listView);
+
+        Cursor cursor = getContentResolver().query(KeywordProvider.CONTENT_URI, null, null, null, null);
+        adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.simple_list_item_1, cursor,
+                new String[]{KeywordProvider.NAME}, new int[]{R.id.text1});
         listView.setAdapter(adapter);
+
+        handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                Cursor cursor = getContentResolver().query(KeywordProvider.CONTENT_URI, null, null, null, null);
+                adapter.changeCursor(cursor);
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+
+        getContentResolver().registerContentObserver(KeywordProvider.CONTENT_URI, true, new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange) {
+                handler.sendEmptyMessage(0);
+            }
+        });
     }
 
     @Override
@@ -39,8 +68,71 @@ public class BlockActivity extends SherlockActivity {
             case android.R.id.home:
                 this.finish();
                 return true;
+            case R.id.menu_add:
+                showEditDialog(0, "");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.block, menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.block_activity, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(android.view.MenuItem item) {
+        int position = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
+        Cursor data = (Cursor) adapter.getItem(position);
+        String keyword = data.getString(data.getColumnIndex(KeywordProvider.NAME));
+        int id = data.getInt(data.getColumnIndex(KeywordProvider._ID));
+        switch (item.getItemId()) {
+            case R.id.menu_edit:
+                showEditDialog(id, keyword);
+                break;
+            case R.id.menu_remove:
+                getContentResolver().delete(ContentUris.withAppendedId(KeywordProvider.CONTENT_URI, id), null, null);
+                break;
+        }
+        return true;
+    }
+
+    public void showEditDialog(final int id, final String str) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("设置关键字");
+
+        final EditText input = new EditText(this);
+        input.setText(str);
+        alert.setView(input);
+
+        alert.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                ContentValues values = new ContentValues();
+                values.put(KeywordProvider.NAME, input.getText().toString());
+                if (TextUtils.isEmpty(str)) {
+                    getContentResolver().insert(KeywordProvider.CONTENT_URI, values);
+                } else {
+                    getContentResolver().update(ContentUris.withAppendedId(KeywordProvider.CONTENT_URI, id), values, null, null);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        alert.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        alert.show();
     }
 }
