@@ -2,6 +2,7 @@ package com.lecoding.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,6 +66,7 @@ public class WeiboAdapter extends BaseAdapter {
             holder.picList = (PicList) view.findViewById(R.id.piclist);
             holder.thumbnail = (SmartImageView) view.findViewById(R.id.thumbnail);
             holder.retweet = (Retweet) view.findViewById(R.id.retweet);
+            holder.source = (TextView) view.findViewById(R.id.weibo_item_src);
 
             view.setTag(holder);
         } else {
@@ -87,6 +89,8 @@ public class WeiboAdapter extends BaseAdapter {
         holder.attitudeCount.setText("赞(" + status.getAttitudesCount() + ")");
         holder.commentCount.setText("评论(" + status.getCommentsCount() + ")");
         holder.repostCount.setText("转发(" + status.getRepostsCount() + ")");
+        holder.source.setText(Html.fromHtml("来自: " + status.getSource()));
+
         if (status.getRetweetedStatus() != null) {
             holder.retweet.setData(status.getRetweetedStatus(), false);
             holder.retweet.setVisibility(View.VISIBLE);
@@ -123,5 +127,6 @@ public class WeiboAdapter extends BaseAdapter {
         public PicList picList;
         public SmartImageView thumbnail;
         public Retweet retweet;
+        public TextView source;
     }
 }

@@ -2,6 +2,7 @@ package com.lecoding.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ public class Retweet extends LinearLayout {
         TextView cmtCount = (TextView) findViewById(R.id.retweet_comment_cnt);
         TextView rpCount = (TextView) findViewById(R.id.retweet_repost_cnt);
         TextView attCount = (TextView) findViewById(R.id.retweet_attitude_cnt);
+        TextView source = (TextView) findViewById(R.id.weibo_item_rtsrc);
         if (status.getUser() != null)
             username.setText(status.getUser().getName());
         text.setText(status.getText());
@@ -70,5 +72,6 @@ public class Retweet extends LinearLayout {
         attCount.setText("赞(" + String.valueOf(status.getAttitudesCount()) + ")");
         cmtCount.setText("评论(" + String.valueOf(status.getCommentsCount()) + ")");
         rpCount.setText("转发(" + String.valueOf(status.getRepostsCount()) + ")");
+        source.setText(Html.fromHtml("来自: " + status.getSource()));
     }
 }

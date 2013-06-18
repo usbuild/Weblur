@@ -44,38 +44,54 @@
                 android:layout_marginTop="10dp"
                 />
 
-        <LinearLayout
-                android:orientation="horizontal"
+
+        <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:layout_marginTop="5dp"
-                >
+                android:layout_marginTop="5dp">
 
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/retweet_attitude_cnt"
+                    android:id="@+id/weibo_item_rtsrc"
                     android:textSize="@dimen/text_size_7"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignParentLeft="true"
                     />
 
-            <TextView
-                    android:layout_width="wrap_content"
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/retweet_repost_cnt"
-                    android:textSize="@dimen/text_size_7"
-                    android:layout_marginRight="10dp"
-                    />
+                    android:gravity="right"
+                    android:layout_alignParentRight="true"
+                    >
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/retweet_comment_cnt"
-                    android:textSize="@dimen/text_size_7"
-                    android:layout_marginRight="10dp"
-                    />
-        </LinearLayout>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/retweet_attitude_cnt"
+                        android:textSize="@dimen/text_size_7"
+                        android:layout_marginRight="10dp"
+                        />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/retweet_repost_cnt"
+                        android:textSize="@dimen/text_size_7"
+                        android:layout_marginRight="10dp"
+                        />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/retweet_comment_cnt"
+                        android:textSize="@dimen/text_size_7"
+                        android:layout_marginRight="10dp"
+                        />
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

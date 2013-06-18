@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -62,6 +63,7 @@ public class ViewWeiboActivity extends SherlockActivity {
     private TextView repostCount;
     private TextView attitudeCount;
     private ListView commentList;
+    private TextView source;
     private CommentAdapter commentAdapter;
     private RepostAdapter repostAdapter;
     private List<Comment> comments;
@@ -127,6 +129,10 @@ public class ViewWeiboActivity extends SherlockActivity {
         commentCount = (TextView) findViewById(R.id.weibo_item_comment_cnt);
         repostCount = (TextView) findViewById(R.id.weibo_item_repost_cnt);
 
+        source = (TextView) findViewById(R.id.weibo_item_src);
+        source.setMovementMethod(LinkMovementMethod.getInstance());
+
+
 
         status = (Status) getIntent().getSerializableExtra("status");
 
@@ -135,6 +141,7 @@ public class ViewWeiboActivity extends SherlockActivity {
         attitudeCount.setText("赞(" + status.getAttitudesCount() + ")");
         commentCount.setText("评论(" + status.getCommentsCount() + ")");
         repostCount.setText("转发(" + status.getRepostsCount() + ")");
+        source.setText(Html.fromHtml("来自: " + status.getSource()));
 
         weiboText.setText(status.getText());
         profileImg.setImageUrl(status.getUser().getProfileImageUrl());

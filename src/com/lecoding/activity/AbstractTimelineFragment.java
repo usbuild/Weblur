@@ -166,17 +166,19 @@ public abstract class AbstractTimelineFragment extends Fragment {
         int postion = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
         Status status = (Status) adapter.getItem(postion - 1);
 
-        Intent intent = null;
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.reply:
                 intent = new Intent(getActivity(), PostActivity.class);
                 intent.putExtra("type", PostActivity.COMMENT);
                 intent.putExtra("status", status);
+                startActivity(intent);
                 break;
             case R.id.forward:
                 intent = new Intent(getActivity(), PostActivity.class);
                 intent.putExtra("type", PostActivity.FORWARD);
                 intent.putExtra("status", status);
+                startActivity(intent);
                 break;
             case R.id.share:
                 intent = new Intent();
@@ -187,10 +189,8 @@ public abstract class AbstractTimelineFragment extends Fragment {
                 }
                 intent.putExtra(Intent.EXTRA_TEXT, text);
                 intent.setType("text/plain");
+                startActivity(Intent.createChooser(intent, "分享到"));
                 break;
-        }
-        if (intent != null) {
-            startActivity(intent);
         }
         return super.onContextItemSelected(item);
     }
