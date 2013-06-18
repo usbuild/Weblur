@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
 import com.lecoding.data.KeywordProvider;
+import com.lecoding.util.KeywordUtil;
 
 /**
  * Created by usbuild on 13-6-17.
@@ -28,6 +30,9 @@ public class BlockActivity extends SherlockActivity {
     private ListView listView;
     private CursorAdapter adapter;
     Handler handler;
+    KeywordUtil keywordUtil;
+    SharedPreferences preferences;
+    private final static String BLOCK_KEY = "block_keyword";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +43,29 @@ public class BlockActivity extends SherlockActivity {
 
         listView = (ListView) findViewById(R.id.listView);
         registerForContextMenu(listView);
+
+        View view = View.inflate(this, R.layout.block_header, null);
+
+        preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean isChecked = preferences.getBoolean(BLOCK_KEY, true);
+        CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+        final TextView text = (TextView) view.findViewById(R.id.text);
+
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                preferences.edit().putBoolean(BLOCK_KEY, b).commit();
+                if (b) {
+                    text.setTextColor(getResources().getColor(R.color.listitem_black));
+                } else {
+                    text.setTextColor(getResources().getColor(R.color.listitem_gray));
+                }
+            }
+        });
+        checkbox.setChecked(isChecked);
+
+        listView.addHeaderView(view);
+
 
         Cursor cursor = getContentResolver().query(KeywordProvider.CONTENT_URI, null, null, null, null);
         adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.simple_list_item_1, cursor,
@@ -53,6 +81,8 @@ public class BlockActivity extends SherlockActivity {
                 return false;
             }
         });
+
+        keywordUtil = new KeywordUtil(this);
 
         getContentResolver().registerContentObserver(KeywordProvider.CONTENT_URI, true, new ContentObserver(handler) {
             @Override
@@ -117,8 +147,18 @@ public class BlockActivity extends SherlockActivity {
 
         alert.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                String text = input.getText().toString();
+                if (TextUtils.isEmpty(text)) {
+                    Toast.makeText(getApplicationContext(), "输入的内容不能为空", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (keywordUtil.hasKey(text)) {
+                    Toast.makeText(getApplicationContext(), "已包含该关键词", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 ContentValues values = new ContentValues();
-                values.put(KeywordProvider.NAME, input.getText().toString());
+                values.put(KeywordProvider.NAME, text);
                 if (TextUtils.isEmpty(str)) {
                     getContentResolver().insert(KeywordProvider.CONTENT_URI, values);
                 } else {

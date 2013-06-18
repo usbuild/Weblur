@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:title="@string/menu_comment"
+            android:id="@+id/reply"/>
+    <item
+            android:title="@string/menu_forward"
+            android:id="@+id/forward"/>
+    <item
+            android:title="@string/menu_share"
+            android:id="@+id/share"/>
+</menu>

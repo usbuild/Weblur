@@ -31,6 +31,7 @@ public class KeywordProvider extends ContentProvider {
         URI_MATCHER.addURI(AUTHORITY, BASE_PATH, ALL_KEYS);
         URI_MATCHER.addURI(AUTHORITY, BASE_PATH + "/#", ONE_KEY);
     }
+
     public static final String _ID = "_id";
     public static final String NAME = "name";
     private KeyDataBaseHelper helper;
@@ -48,7 +49,7 @@ public class KeywordProvider extends ContentProvider {
         SQLiteDatabase database = helper.getReadableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(KeyDataBaseHelper.TBNAME);
-        Cursor cursor = queryBuilder.query(database, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(database, projection, selection, selectionArgs, null, null, "name asc");
 
         return cursor;
     }

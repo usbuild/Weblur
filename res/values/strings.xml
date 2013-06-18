@@ -39,5 +39,7 @@
     <string name="edit">修改</string>
     <string name="remove">删除</string>
     <string name="menu_add">添加</string>
+    <string name="enable_block">启用屏蔽</string>
+    <string name="menu_share">分享</string>
 
 </resources>

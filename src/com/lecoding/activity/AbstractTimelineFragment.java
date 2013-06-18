@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import com.lecoding.R;
@@ -110,6 +108,8 @@ public abstract class AbstractTimelineFragment extends Fragment {
                 loadUp();
             }
         });
+        registerForContextMenu(listView);
+
         if (BaseActivity.token != null) loadData();
 
         return view;
@@ -153,6 +153,42 @@ public abstract class AbstractTimelineFragment extends Fragment {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.weibo_ctx, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int postion = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
+        Status status = (Status) adapter.getItem(postion - 1);
+
+        Intent intent = null;
+        switch (item.getItemId()) {
+            case R.id.reply:
+                intent = new Intent(getActivity(), PostActivity.class);
+                intent.putExtra("type", PostActivity.COMMENT);
+                intent.putExtra("status", status);
+                break;
+            case R.id.forward:
+                intent = new Intent(getActivity(), PostActivity.class);
+                intent.putExtra("type", PostActivity.FORWARD);
+                intent.putExtra("status", status);
+                break;
+            case R.id.share:
+                intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, status.getText());
+                intent.setType("text/plain");
+                break;
+        }
+        if (intent != null) {
+            startActivity(intent);
+        }
+        return super.onContextItemSelected(item);
     }
 
     protected void setUp(String response) {
