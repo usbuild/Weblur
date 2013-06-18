@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+            android:key="pref_key_keyword"
+            android:title="@string/pref_block_keyword"
+            android:defaultValue="true"
+            />
+    <CheckBoxPreference
+            android:key="pref_key_time"
+            android:title="@string/pref_block_time"
+            android:defaultValue="true"
+            />
+    <CheckBoxPreference
+            android:key="pref_key_source"
+            android:title="@string/pref_block_source"
+            android:defaultValue="true"
+            />
+    <Preference
+            android:key="pref_key_test"
+            android:title="测试"
+            android:layout="@layout/mycheckbox"
+            />
+</PreferenceScreen>

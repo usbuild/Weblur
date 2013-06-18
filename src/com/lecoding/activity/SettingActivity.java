@@ -3,22 +3,14 @@ package com.lecoding.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Looper;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
-import com.weibo.sdk.android.WeiboException;
-import com.weibo.sdk.android.api.AccountAPI;
-import com.weibo.sdk.android.net.RequestListener;
-
-import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.

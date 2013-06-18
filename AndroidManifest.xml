@@ -44,6 +44,7 @@
                 android:name=".activity.AboutActivity"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
         <activity android:name=".activity.WeiboListActivity"/>
+        <activity android:name=".activity.KeywordActivity"/>
         <activity android:name=".activity.BlockActivity"/>
 
         <receiver
@@ -57,6 +58,10 @@
         <provider
                 android:name=".data.KeywordProvider"
                 android:authorities="com.lecoding.data.keywordprovider"/>
+
+        <provider
+                android:name=".data.SourceProvider"
+                android:authorities="com.lecoding.data.sourceprovider"/>
     </application>
 
 </manifest>
