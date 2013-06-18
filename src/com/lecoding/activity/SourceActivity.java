@@ -1,23 +1,25 @@
 package com.lecoding.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import com.lecoding.data.KeywordProvider;
+import com.lecoding.data.SourceProvider;
 import com.lecoding.util.DuplicateUtil;
 
 /**
- * Created by usbuild on 13-6-17.
+ * Created by usbuild on 13-6-18.
  */
-public class KeywordActivity extends AbstractListViewActivity {
+public class SourceActivity extends AbstractListViewActivity {
     DuplicateUtil util;
 
-    public KeywordActivity() {
-        super(KeywordProvider.traits);
+    public SourceActivity() {
+        super(SourceProvider.traits);
     }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle("关键词");
-        util = new DuplicateUtil(this, KeywordProvider.traits);
+        getSupportActionBar().setTitle("微博来源");
+        util = new DuplicateUtil(this, SourceProvider.traits);
     }
 
     @Override

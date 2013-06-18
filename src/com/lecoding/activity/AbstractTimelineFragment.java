@@ -1,16 +1,22 @@
 package com.lecoding.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import com.lecoding.R;
+import com.lecoding.data.SourceProvider;
 import com.lecoding.data.Status;
+import com.lecoding.util.BlockValidator;
+import com.lecoding.util.DuplicateUtil;
 import com.lecoding.util.JSONParser;
 import com.lecoding.util.WeiboAdapter;
 import com.lecoding.view.PullToRefreshListView;
@@ -146,7 +152,9 @@ public abstract class AbstractTimelineFragment extends Fragment {
             List<com.lecoding.data.Status> statuses = new ArrayList<com.lecoding.data.Status>();
             for (int i = 0; i < array.length(); ++i) {
                 JSONObject object = array.getJSONObject(i);
-                statuses.add(JSONParser.parseStatus(object));
+                Status st = JSONParser.parseStatus(object);
+                if (BlockValidator.getInstance(getActivity()).validate(st))
+                    statuses.add(st);
             }
             return statuses;
         } catch (JSONException e) {
@@ -159,6 +167,9 @@ public abstract class AbstractTimelineFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.weibo_ctx, menu);
+        int postion = ((AdapterView.AdapterContextMenuInfo) menuInfo).position;
+        Status status = (Status) adapter.getItem(postion - 1);
+        menu.findItem(R.id.block).setTitle(Html.fromHtml("屏蔽来自： " + status.getSource()).toString());
     }
 
     @Override
@@ -190,6 +201,19 @@ public abstract class AbstractTimelineFragment extends Fragment {
                 intent.putExtra(Intent.EXTRA_TEXT, text);
                 intent.setType("text/plain");
                 startActivity(Intent.createChooser(intent, "分享到"));
+                break;
+            case R.id.block:
+                String source = Html.fromHtml(status.getSource()).toString();
+                if (new DuplicateUtil(getActivity(), SourceProvider.traits).hasKey(source)) {
+                    Toast.makeText(getActivity(), "已加入屏蔽列表", Toast.LENGTH_LONG).show();
+                }
+                if (TextUtils.isEmpty(source)) {
+                    Toast.makeText(getActivity(), "来源为空，无法添加", Toast.LENGTH_LONG).show();
+                }
+                ContentValues values = new ContentValues();
+                values.put(SourceProvider.NAME, source);
+                getActivity().getContentResolver().insert(SourceProvider.CONTENT_URI, values);
+                Toast.makeText(getActivity(), "添加成功", Toast.LENGTH_LONG).show();
                 break;
         }
         return super.onContextItemSelected(item);

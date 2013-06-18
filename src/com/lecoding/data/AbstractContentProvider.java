@@ -3,7 +3,6 @@ package com.lecoding.data;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -115,20 +114,23 @@ public abstract class AbstractContentProvider extends ContentProvider {
     }
 
     private class KeyDataBaseHelper extends SQLiteOpenHelper {
+        private static final String DBNAME = "block.db";
         private static final int DATABASE_VERSION = 2;
 
         public KeyDataBaseHelper(Context context) {
-            super(context, traits.getDbname(), null, DATABASE_VERSION);
+            super(context, DBNAME, null, DATABASE_VERSION);
         }
 
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
-            sqLiteDatabase.execSQL("create table if not exists " + traits.getTable() + "(" + traits.get_ID() + " integer primary key autoincrement, name text not null);");
+            sqLiteDatabase.execSQL("create table if not exists keywords(_id integer primary key autoincrement, name text not null);");
+            sqLiteDatabase.execSQL("create table if not exists source(_id integer primary key autoincrement, name text not null);");
+            sqLiteDatabase.execSQL("create table if not exists time(_id integer primary key autoincrement, name text not null);");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
-            sqLiteDatabase.execSQL("drop table if exists " + traits.getDbname());
+            sqLiteDatabase.execSQL("drop table if exists " + DBNAME);
             onCreate(sqLiteDatabase);
         }
     }

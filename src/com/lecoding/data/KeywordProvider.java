@@ -30,7 +30,6 @@ public class KeywordProvider extends AbstractContentProvider {
         traits.setBasePath(BASE_PATH);
         traits.setUriMatcher(URI_MATCHER);
         traits.setContentUri(CONTENT_URI);
-        traits.setDbname("block.db");
         traits.setTable("keywords");
     }
 

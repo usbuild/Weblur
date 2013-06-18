@@ -49,5 +49,6 @@
     <string name="pref_block_keyword">关键词屏蔽</string>
     <string name="pref_block_time">时间段屏蔽</string>
     <string name="pref_block_source">来源屏蔽</string>
+    <string name="block_source">屏蔽来源</string>
 
 </resources>

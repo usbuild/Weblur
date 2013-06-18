@@ -14,7 +14,6 @@ public class ContentProviderTraits {
     private UriMatcher uriMatcher;
     private Uri contentUri;
     private String table;
-    private String dbname;
 
     public String getTable() {
         return table;
@@ -22,14 +21,6 @@ public class ContentProviderTraits {
 
     public void setTable(String table) {
         this.table = table;
-    }
-
-    public String getDbname() {
-        return dbname;
-    }
-
-    public void setDbname(String dbname) {
-        this.dbname = dbname;
     }
 
     public Uri getContentUri() {

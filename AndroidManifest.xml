@@ -46,6 +46,7 @@
         <activity android:name=".activity.WeiboListActivity"/>
         <activity android:name=".activity.KeywordActivity"/>
         <activity android:name=".activity.BlockActivity"/>
+        <activity android:name=".activity.SourceActivity"/>
 
         <receiver
                 android:name=".util.ConnectionChangeReceiver"
