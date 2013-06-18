@@ -181,7 +181,11 @@ public abstract class AbstractTimelineFragment extends Fragment {
             case R.id.share:
                 intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, status.getText());
+                String text = status.getText();
+                if (status.getRetweetedStatus() != null) {
+                    text += "//@" + status.getRetweetedStatus().getUser().getScreenName() + ": " + status.getRetweetedStatus().getText();
+                }
+                intent.putExtra(Intent.EXTRA_TEXT, text);
                 intent.setType("text/plain");
                 break;
         }
