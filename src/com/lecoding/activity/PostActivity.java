@@ -61,6 +61,7 @@ public class PostActivity extends SherlockActivity {
         commentCurrent = (CheckBox) findViewById(R.id.comment_current);
 
         if (type == STATUS) {
+            positionButton.setVisibility(View.GONE);
             commentCurrent.setVisibility(View.GONE);
             commentOrigin.setVisibility(View.GONE);
             postStatus();
