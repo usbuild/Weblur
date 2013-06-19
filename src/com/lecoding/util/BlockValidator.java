@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.text.Html;
+import com.lecoding.activity.BlockActivity;
 import com.lecoding.data.KeywordProvider;
 import com.lecoding.data.SourceProvider;
 import com.lecoding.data.Status;
@@ -32,7 +33,7 @@ public class BlockValidator {
         this.context = context;
         final DuplicateUtil keyUtil = new DuplicateUtil(context, KeywordProvider.traits);
         keywords = keyUtil.getAllKeys();
-        preferences = context.getSharedPreferences("block", Context.MODE_PRIVATE);
+        preferences = context.getSharedPreferences(BlockActivity.DOMAIN, Context.MODE_PRIVATE);
         context.getContentResolver().registerContentObserver(KeywordProvider.CONTENT_URI, true, new ContentObserver(null) {
             @Override
             public void onChange(boolean selfChange) {
@@ -51,12 +52,12 @@ public class BlockValidator {
     }
 
     public boolean validate(Status status) {
-        if (preferences.getBoolean("source", false)) {
+        if (preferences.getBoolean(BlockActivity.SOURCE, false)) {
             if (sources.contains(Html.fromHtml(status.getSource()).toString())) {
                 return false;
             }
         }
-        if (preferences.getBoolean("keywords", false)) {
+        if (preferences.getBoolean(BlockActivity.KEYWORD, false)) {
 
             for (String key : keywords) {
                 if (status.getText().contains(key)) return false;

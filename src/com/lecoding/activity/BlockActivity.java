@@ -16,6 +16,9 @@ import com.lecoding.view.MyCheckboxPreference;
  */
 public class BlockActivity extends SherlockPreferenceActivity {
     SharedPreferences preferences;
+    public static final String DOMAIN = "block";
+    public static final String KEYWORD = "keywords";
+    public static final String SOURCE = "source";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +31,9 @@ public class BlockActivity extends SherlockPreferenceActivity {
         addPreferencesFromResource(R.xml.block);
         MyCheckboxPreference keyword = (MyCheckboxPreference) findPreference("pref_block_keyword");
 
-        preferences = getSharedPreferences("block", MODE_PRIVATE);
+        preferences = getSharedPreferences(DOMAIN, MODE_PRIVATE);
 
-        boolean enableKeywords = preferences.getBoolean("keywords", false);
+        boolean enableKeywords = preferences.getBoolean(KEYWORD, false);
         keyword.setChecked(enableKeywords);
         keyword.setOnSetClickListener(new View.OnClickListener() {
             @Override
@@ -42,12 +45,12 @@ public class BlockActivity extends SherlockPreferenceActivity {
         keyword.setOnChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                preferences.edit().putBoolean("keywords", b).commit();
+                preferences.edit().putBoolean(KEYWORD, b).commit();
             }
         });
 
         MyCheckboxPreference source = (MyCheckboxPreference) findPreference("pref_block_source");
-        boolean enableSource = preferences.getBoolean("source", false);
+        boolean enableSource = preferences.getBoolean(SOURCE, false);
         source.setChecked(enableSource);
         source.setOnSetClickListener(new View.OnClickListener() {
             @Override
@@ -59,10 +62,11 @@ public class BlockActivity extends SherlockPreferenceActivity {
         source.setOnChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                preferences.edit().putBoolean("source", b).commit();
+                preferences.edit().putBoolean(SOURCE, b).commit();
             }
         });
 
+        /*
         MyCheckboxPreference time = (MyCheckboxPreference) findPreference("pref_block_time");
         boolean enableTime = preferences.getBoolean("time", false);
         time.setChecked(enableTime);
@@ -77,6 +81,7 @@ public class BlockActivity extends SherlockPreferenceActivity {
                 preferences.edit().putBoolean("time", b).commit();
             }
         });
+        */
 
     }
 

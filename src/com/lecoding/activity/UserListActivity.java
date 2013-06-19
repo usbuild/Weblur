@@ -117,6 +117,7 @@ public class UserListActivity extends SherlockActivity implements GestureDetecto
         friendsOrFollower(0);
         listView.setOnTouchListener(this);
         gestureDetector = new GestureDetector(this);
+        Toast.makeText(this, "手指左右滑动以换页", Toast.LENGTH_SHORT).show();
     }
 
     public void updateResult(String response) {

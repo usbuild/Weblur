@@ -10,8 +10,8 @@
             android:key="pref_block_source"
             android:title="@string/pref_block_source"
             />
-    <com.lecoding.view.MyCheckboxPreference
-            android:key="pref_block_time"
-            android:title="@string/pref_block_time"
-            />
+    <!--<com.lecoding.view.MyCheckboxPreference-->
+            <!--android:key="pref_block_time"-->
+            <!--android:title="@string/pref_block_time"-->
+            <!--/>-->
 </PreferenceScreen>

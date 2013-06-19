@@ -1,7 +1,10 @@
 package com.lecoding.activity;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.ContentObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +16,7 @@ import android.view.*;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import com.lecoding.R;
+import com.lecoding.data.KeywordProvider;
 import com.lecoding.data.SourceProvider;
 import com.lecoding.data.Status;
 import com.lecoding.util.BlockValidator;
@@ -38,6 +42,7 @@ public abstract class AbstractTimelineFragment extends Fragment {
      */
     protected final int WEIBO_ERROR = 0;
     protected final int PUBLIC_LINE = 1;
+    protected final int RESET = 2;
     protected final int PAGE_SIZE = 20;
     protected final int UP_LOAD = 0;
     protected final int DOWN_LOAD = 1;
@@ -46,17 +51,34 @@ public abstract class AbstractTimelineFragment extends Fragment {
     protected long sinceId = 0;
     protected long maxId = 0;
     protected List<Status> oldStatuses = new ArrayList<Status>();
+    protected List<Status> allStatues = new ArrayList<Status>();
     protected WeiboAdapter adapter;
+    protected BlockValidator validator;
+    protected SharedPreferences preferences;
+
+    public List<Status> filterStatus(List<Status> statuses) {
+        List<Status> sts = new ArrayList<Status>();
+        for (Status st : statuses) {
+            if (validator.validate(st)) {
+                sts.add(st);
+            }
+        }
+        return sts;
+    }
 
     public void updateListView(List<Status> statuses, int direction) {
+
         if (statuses.size() > 0) {
             if (direction == 0) {
                 if (oldStatuses.size() == 0) maxId = statuses.get(statuses.size() - 1).getId() - 1;
-                this.oldStatuses.addAll(0, statuses);
+                this.oldStatuses.addAll(0, filterStatus(statuses));
+                this.allStatues.addAll(0, statuses);
                 if (statuses.size() > 0)
                     sinceId = statuses.get(0).getId();
             } else {
-                this.oldStatuses.addAll(statuses);
+                this.oldStatuses.addAll(filterStatus(statuses));
+                this.allStatues.addAll(statuses);
+
                 maxId = statuses.get(statuses.size() - 1).getId() - 1;
             }
             Toast.makeText(getActivity(), "共更新" + statuses.size() + "条微博", Toast.LENGTH_SHORT).show();
@@ -77,6 +99,13 @@ public abstract class AbstractTimelineFragment extends Fragment {
     public void loadData() {
         listView.prepareForRefresh();
         loadUp();
+    }
+
+    public void refreshAll() {
+        oldStatuses.clear();
+        oldStatuses.addAll(filterStatus(allStatues));
+        adapter.notifyDataSetChanged();
+        listView.setSelection(1);
     }
 
     @Override
@@ -138,11 +167,37 @@ public abstract class AbstractTimelineFragment extends Fragment {
                     case PUBLIC_LINE:
                         updateListView((List<Status>) message.obj, message.arg1);
                         break;
+                    case RESET:
+                        refreshAll();
+                        break;
                 }
                 return true;
             }
         });
+        preferences = getActivity().getSharedPreferences(BlockActivity.DOMAIN, Context.MODE_PRIVATE);
+        preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                handler.sendEmptyMessage(RESET);
+            }
+        });
 
+        getActivity().getContentResolver().registerContentObserver(SourceProvider.CONTENT_URI, false, new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange) {
+                handler.sendEmptyMessage(RESET);
+            }
+        });
+
+        getActivity().getContentResolver().registerContentObserver(KeywordProvider.CONTENT_URI, false, new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange) {
+                handler.sendEmptyMessage(RESET);
+            }
+        });
+
+
+        validator = BlockValidator.getInstance(getActivity());
     }
 
     private List<Status> parseJSON(String resp) {
@@ -153,8 +208,7 @@ public abstract class AbstractTimelineFragment extends Fragment {
             for (int i = 0; i < array.length(); ++i) {
                 JSONObject object = array.getJSONObject(i);
                 Status st = JSONParser.parseStatus(object);
-                if (BlockValidator.getInstance(getActivity()).validate(st))
-                    statuses.add(st);
+                statuses.add(st);
             }
             return statuses;
         } catch (JSONException e) {
@@ -205,15 +259,15 @@ public abstract class AbstractTimelineFragment extends Fragment {
             case R.id.block:
                 String source = Html.fromHtml(status.getSource()).toString();
                 if (new DuplicateUtil(getActivity(), SourceProvider.traits).hasKey(source)) {
-                    Toast.makeText(getActivity(), "已加入屏蔽列表", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "已加入屏蔽列表", Toast.LENGTH_SHORT).show();
                 }
                 if (TextUtils.isEmpty(source)) {
-                    Toast.makeText(getActivity(), "来源为空，无法添加", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "来源为空，无法添加", Toast.LENGTH_SHORT).show();
                 }
                 ContentValues values = new ContentValues();
                 values.put(SourceProvider.NAME, source);
                 getActivity().getContentResolver().insert(SourceProvider.CONTENT_URI, values);
-                Toast.makeText(getActivity(), "添加成功", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "添加成功", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onContextItemSelected(item);

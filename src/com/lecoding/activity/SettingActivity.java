@@ -1,5 +1,7 @@
 package com.lecoding.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,7 +21,7 @@ import com.lecoding.R;
  */
 public class SettingActivity extends SherlockPreferenceActivity {
 
-    CheckBoxPreference showImagePref;
+//    CheckBoxPreference showImagePref;
     Preference accountPref;
     SharedPreferences preferences;
     Preference about;
@@ -60,15 +62,39 @@ public class SettingActivity extends SherlockPreferenceActivity {
         logoutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                CookieSyncManager.createInstance(SettingActivity.this);
-                CookieSyncManager.getInstance().startSync();
-                CookieManager.getInstance().removeAllCookie();
-                BaseActivity.token = null;
 
-                Intent intent = new Intent(SettingActivity.this, BaseActivity.class);
-                intent.putExtra("exit", true);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                builder.setTitle("退出登录?");
+                builder.setMessage("您将要重新输入用户名和密码以使用本程序");
+                builder.setPositiveButton("确认",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                CookieSyncManager.createInstance(SettingActivity.this);
+                                CookieSyncManager.getInstance().startSync();
+                                CookieManager.getInstance().removeAllCookie();
+                                BaseActivity.token = null;
+
+                                Intent intent = new Intent(SettingActivity.this, BaseActivity.class);
+                                intent.putExtra("exit", true);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+
+                            }
+                        });
+                builder.setNegativeButton("取消",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+
+                            }
+                        });
+                builder.create().show();
+
                 return true;
             }
         });
