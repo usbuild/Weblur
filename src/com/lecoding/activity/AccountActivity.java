@@ -106,7 +106,7 @@ public class AccountActivity extends SherlockActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AccountActivity.this, WeiboListActivity.class);
-                intent.putExtra("uid", user.getId());
+                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });
