@@ -50,5 +50,6 @@
     <string name="pref_block_time">时间段屏蔽</string>
     <string name="pref_block_source">来源屏蔽</string>
     <string name="block_source">屏蔽来源</string>
+    <string name="clear_cache">清除缓存</string>
 
 </resources>

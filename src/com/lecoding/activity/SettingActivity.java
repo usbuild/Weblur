@@ -4,15 +4,21 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.lecoding.R;
+import com.loopj.android.image.WebImageCache;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,12 +27,17 @@ import com.lecoding.R;
  */
 public class SettingActivity extends SherlockPreferenceActivity {
 
-//    CheckBoxPreference showImagePref;
+    //    CheckBoxPreference showImagePref;
     Preference accountPref;
     SharedPreferences preferences;
     Preference about;
     Preference logoutPref;
     Preference blockPref;
+    Preference clearCache;
+    Handler handler;
+    WebImageCache imageCache;
+    public final int UPDATING = 0;
+    public final int UPDATED = 1;
 
     @SuppressWarnings("deprecated")
 
@@ -108,6 +119,21 @@ public class SettingActivity extends SherlockPreferenceActivity {
             }
         });
 
+        clearCache = findPreference("pref_key_setting_cache");
+        imageCache = new WebImageCache(SettingActivity.this);
+
+        clearCache.setSummary("空间占用： 正在计算");
+        new UpdateCacheTask().execute(false);
+
+        clearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new UpdateCacheTask().execute(true);
+                return true;
+            }
+        });
+
+
 
         /*
         showImagePref = (CheckBoxPreference) findPreference("pref_key_show_img");
@@ -127,6 +153,39 @@ public class SettingActivity extends SherlockPreferenceActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("设置");
 
+        handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what) {
+                    case UPDATED:
+                        clearCache.setSummary("空间占用: " + message.obj.toString());
+                        clearCache.setEnabled(true);
+                        break;
+                    case UPDATING:
+                        clearCache.setSummary("正在清除");
+                        clearCache.setEnabled(false);
+                        break;
+                }
+                return true;
+            }
+        });
+
+    }
+
+    class UpdateCacheTask extends AsyncTask<Boolean, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Boolean... v) {
+            Message message = new Message();
+            message.what = UPDATED;
+            if (v[0]) {
+                handler.sendEmptyMessage(UPDATING);
+                imageCache.clear();
+            }
+            message.obj = imageCache.cacheSize();
+            handler.sendMessage(message);
+            return null;
+        }
     }
 
 

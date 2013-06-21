@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
+import java.text.DecimalFormat;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,6 +92,33 @@ public class WebImageCache {
                 }
             }
         }
+    }
+
+    public String cacheSize() {
+        File dir = new File(diskCachePath);
+        String fileSizeString;
+        DecimalFormat df = new DecimalFormat("#.00");
+        if (dir.exists()) {
+            long result = 0;
+            File[] fileList = dir.listFiles();
+            for (int i = 0; i < fileList.length; i++) {
+                result += fileList[i].length();
+            }
+            if (result == 0) return "0";
+
+
+            if (result < 1024) {
+                fileSizeString = df.format((double) result) + "B";
+            } else if (result < 1048576) {
+                fileSizeString = df.format((double) result / 1024) + "K";
+            } else if (result < 1073741824) {
+                fileSizeString = df.format((double) result / 1048576) + "M";
+            } else {
+                fileSizeString = df.format((double) result / 1073741824) + "G";
+            }
+            return fileSizeString;
+        }
+        return "";
     }
 
     private void cacheBitmapToMemory(final String url, final Bitmap bitmap) {

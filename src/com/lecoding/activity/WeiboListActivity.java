@@ -65,9 +65,9 @@ public class WeiboListActivity extends SherlockActivity {
 
             adapter.notifyDataSetChanged();
             if (direction == 0) {
-                listView.setSelection(1 + statuses.size());
+                listView.setSelection(statuses.size());
             } else {
-                listView.setSelection(1 + oldStatuses.size() - statuses.size());
+                listView.setSelection(oldStatuses.size() - statuses.size());
             }
         }
     }
